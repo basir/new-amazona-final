@@ -71,17 +71,22 @@ export default function ProductListScreen(props) {
   return (
     <div>
       <div className="row">
-        <h1>Products</h1>
-        <button type="button" className="primary" onClick={createHandler}>
-          Create Product
-        </button>
+        <h1 className="col">Products</h1>
+        <div className="col text-end">
+          <button
+            type="button"
+            className=" btn btn-primary"
+            onClick={createHandler}
+          >
+            Create Product
+          </button>
+        </div>
       </div>
 
       {loadingDelete && <LoadingBox></LoadingBox>}
-      {errorDelete && <MessageBox variant="danger">{errorDelete}</MessageBox>}
 
       {loadingCreate && <LoadingBox></LoadingBox>}
-      {errorCreate && <MessageBox variant="danger">{errorCreate}</MessageBox>}
+
       {loading ? (
         <LoadingBox></LoadingBox>
       ) : error ? (
@@ -110,14 +115,14 @@ export default function ProductListScreen(props) {
                   <td>
                     <button
                       type="button"
-                      className="small"
+                      className="btn btn-light"
                       onClick={() => navigate(`/product/${product._id}/edit`)}
                     >
                       Edit
                     </button>
                     <button
                       type="button"
-                      className="small"
+                      className="btn btn-light"
                       onClick={() => deleteHandler(product)}
                     >
                       Delete

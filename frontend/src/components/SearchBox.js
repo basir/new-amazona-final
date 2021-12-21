@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 
 export default function SearchBox() {
   const navigate = useNavigate();
-  const [name, setName] = useState('');
+  const [query, setQuery] = useState('');
   const submitHandler = (e) => {
     e.preventDefault();
-    navigate(`/search/name/${name}`);
+    navigate(query ? `/search/?query=${query}` : '/search');
   };
   return (
     <form className="d-flex me-auto" onSubmit={submitHandler}>
@@ -15,7 +15,7 @@ export default function SearchBox() {
           type="text"
           name="q"
           id="q"
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => setQuery(e.target.value)}
           className="form-control"
           placeholder="search products..."
           aria-label="Search Products"

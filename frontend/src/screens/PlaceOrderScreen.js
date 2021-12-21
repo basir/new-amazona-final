@@ -1,17 +1,17 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { createOrder } from '../actions/orderActions';
-import CheckoutSteps from '../components/CheckoutSteps';
-import { ORDER_CREATE_RESET } from '../constants/orderConstants';
-import LoadingBox from '../components/LoadingBox';
-import MessageBox from '../components/MessageBox';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { createOrder } from "../actions/orderActions";
+import CheckoutSteps from "../components/CheckoutSteps";
+import { ORDER_CREATE_RESET } from "../constants/orderConstants";
+import LoadingBox from "../components/LoadingBox";
+import MessageBox from "../components/MessageBox";
 
 export default function PlaceOrderScreen(props) {
   const navigate = useNavigate();
   const cart = useSelector((state) => state.cart);
   if (!cart.paymentMethod) {
-    navigate('/payment');
+    navigate("/payment");
   }
   const orderCreate = useSelector((state) => state.orderCreate);
   const { loading, success, error, order } = orderCreate;
@@ -35,105 +35,102 @@ export default function PlaceOrderScreen(props) {
   return (
     <div>
       <CheckoutSteps step1 step2 step3 step4></CheckoutSteps>
-      <div className="row top">
-        <div className="col-2">
-          <ul>
-            <li>
-              <div className="card card-body">
-                <h2>Shipping</h2>
-                <p>
-                  <strong>Name:</strong> {cart.shippingAddress.fullName} <br />
-                  <strong>Address: </strong> {cart.shippingAddress.address},
-                  {cart.shippingAddress.city}, {cart.shippingAddress.postalCode}
-                  ,{cart.shippingAddress.country}
-                </p>
-              </div>
-            </li>
-            <li>
-              <div className="card card-body">
-                <h2>Payment</h2>
-                <p>
-                  <strong>Method:</strong> {cart.paymentMethod}
-                </p>
-              </div>
-            </li>
-            <li>
-              <div className="card card-body">
-                <h2>Order Items</h2>
-                <ul>
-                  {cart.cartItems.map((item) => (
-                    <li key={item.product}>
-                      <div className="row">
-                        <div>
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="small"
-                          ></img>
-                        </div>
-                        <div className="min-30">
-                          <Link to={`/product/${item.product}`}>
-                            {item.name}
-                          </Link>
-                        </div>
 
-                        <div>
-                          {item.qty} x ${item.price} = ${item.qty * item.price}
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </li>
-          </ul>
+      <h1 className="my-3">Preview Order</h1>
+      <div className="row">
+        <div className="col-md-8">
+          <div className="mb-3 card card-body">
+            <h2>Shipping</h2>
+            <p>
+              <strong>Name:</strong> {cart.shippingAddress.fullName} <br />
+              <strong>Address: </strong> {cart.shippingAddress.address},
+              {cart.shippingAddress.city}, {cart.shippingAddress.postalCode},
+              {cart.shippingAddress.country}
+            </p>
+            <Link to="/shipping">Edit</Link>
+          </div>
+
+          <div className="mb-3 card card-body">
+            <h2>Payment</h2>
+            <p>
+              <strong>Method:</strong> {cart.paymentMethod}
+            </p>
+            <Link to="/payment">Edit</Link>
+          </div>
+
+          <div className="mb-3 card card-body">
+            <h2>Items</h2>
+            <ul className="list-group list-group-flush">
+              {cart.cartItems.map((item) => (
+                <li className="list-group-item" key={item.product}>
+                  <div className="row align-items-center">
+                    <div className="col-md-6">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="img-fluid rounded img-thumbnail"
+                      ></img>{" "}
+                      <Link to={`/product/${item.product}`}>{item.name}</Link>
+                    </div>
+                    <div className="col-md-3">
+                      <span>{item.qty}</span>
+                    </div>
+                    <div className="col-md-3">${item.price}</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <Link to="/cart">Edit</Link>
+          </div>
         </div>
-        <div className="col-1">
+        <div className="col-md-4">
           <div className="card card-body">
-            <ul>
-              <li>
-                <h2>Order Summary</h2>
-              </li>
-              <li>
+            <h2>Order Summary</h2>
+            <ul className="list-group list-group-flush">
+              <li className="list-group-item">
                 <div className="row">
-                  <div>Items</div>
-                  <div>${cart.itemsPrice.toFixed(2)}</div>
+                  <div className="col">Items</div>
+                  <div className="col">${cart.itemsPrice.toFixed(2)}</div>
                 </div>
               </li>
-              <li>
+              <li className="list-group-item">
                 <div className="row">
-                  <div>Shipping</div>
-                  <div>${cart.shippingPrice.toFixed(2)}</div>
+                  <div className="col">Shipping</div>
+                  <div className="col">${cart.shippingPrice.toFixed(2)}</div>
                 </div>
               </li>
-              <li>
+              <li className="list-group-item">
                 <div className="row">
-                  <div>Tax</div>
-                  <div>${cart.taxPrice.toFixed(2)}</div>
+                  <div className="col">Tax</div>
+                  <div className="col">${cart.taxPrice.toFixed(2)}</div>
                 </div>
               </li>
-              <li>
+              <li className="list-group-item">
                 <div className="row">
-                  <div>
+                  <div className="col">
                     <strong> Order Total</strong>
                   </div>
-                  <div>
+                  <div className="col">
                     <strong>${cart.totalPrice.toFixed(2)}</strong>
                   </div>
                 </div>
               </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={placeOrderHandler}
-                  className="primary block"
-                  disabled={cart.cartItems.length === 0}
-                >
-                  Place Order
-                </button>
+
+              <li className="list-group-item">
+                <div className="d-grid">
+                  <button
+                    type="button"
+                    onClick={placeOrderHandler}
+                    className="btn btn-primary"
+                    disabled={cart.cartItems.length === 0}
+                  >
+                    Place Order
+                  </button>
+                </div>
+
+                {loading && <LoadingBox></LoadingBox>}
+                {error && <MessageBox variant="danger">{error}</MessageBox>}
               </li>
-              {loading && <LoadingBox></LoadingBox>}
-              {error && <MessageBox variant="danger">{error}</MessageBox>}
             </ul>
           </div>
         </div>

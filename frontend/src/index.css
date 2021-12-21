@@ -3,7 +3,9 @@ body,
 #root {
   min-height: 100vh;
 }
-
+li {
+  list-style-type: none;
+}
 .btn-primary,
 .btn-outline-primary {
   background-color: #f0c040;
@@ -34,9 +36,6 @@ body,
   margin-left: 240px;
 }
 
-.card-img-top {
-}
-
 h1 {
   font-size: 2rem;
 }
@@ -45,4 +44,38 @@ h2 {
 }
 h3 {
   font-size: 1rem;
+}
+
+.rating span {
+  color: #ffc000;
+}
+
+.img-thumbnail {
+  height: 80px;
+}
+
+.checkout-steps > div {
+  border-bottom: 0.2rem solid #a0a0a0;
+  color: #a0a0a0;
+}
+.checkout-steps > div.active {
+  border-bottom: 0.2rem solid #f08000;
+  color: #f08000;
+}
+.small-container {
+  max-width: 600px;
+}
+.img-large {
+  max-width: 100%;
+}
+.img-small {
+  max-width: 100px;
+}
+
+.carousel .slide img {
+  width: 100%;
+  max-width: 400px;
+}
+.text-bold {
+  font-weight: bold;
 }

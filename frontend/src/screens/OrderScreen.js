@@ -1,78 +1,186 @@
 import Axios from 'axios';
-import { PayPalButton } from 'react-paypal-button-v2';
-import { useParams } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
+import { useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useReducer } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { deliverOrder, detailsOrder, payOrder } from '../actions/orderActions';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import {
-  ORDER_DELIVER_RESET,
-  ORDER_PAY_RESET,
-} from '../constants/orderConstants';
+import { getError } from '../utils';
+import { toast } from 'react-toastify';
 
-export default function OrderScreen(props) {
-  const params = useParams();
-  const { id: orderId } = params;
-
-  const [sdkReady, setSdkReady] = useState(false);
-  const orderDetails = useSelector((state) => state.orderDetails);
-  const { order, loading, error } = orderDetails;
-  const userSignin = useSelector((state) => state.userSignin);
-  const { userInfo } = userSignin;
-
-  const orderPay = useSelector((state) => state.orderPay);
-  const {
-    loading: loadingPay,
-    error: errorPay,
-    success: successPay,
-  } = orderPay;
-  const orderDeliver = useSelector((state) => state.orderDeliver);
-  const {
-    loading: loadingDeliver,
-    error: errorDeliver,
-    success: successDeliver,
-  } = orderDeliver;
-  const dispatch = useDispatch();
-  useEffect(() => {
-    const addPayPalScript = async () => {
-      const { data } = await Axios.get('/api/config/paypal');
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = `https://www.paypal.com/sdk/js?client-id=${data}`;
-      script.async = true;
-      script.onload = () => {
-        setSdkReady(true);
+function reducer(state, action) {
+  switch (action.type) {
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true, error: '' };
+    case 'FETCH_SUCCESS':
+      return { ...state, loading: false, order: action.payload, error: '' };
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
+    case 'PAY_REQUEST':
+      return { ...state, loadingPay: true };
+    case 'PAY_SUCCESS':
+      return { ...state, loadingPay: false, successPay: true };
+    case 'PAY_FAIL':
+      return { ...state, loadingPay: false, errorPay: action.payload };
+    case 'PAY_RESET':
+      return { ...state, loadingPay: false, successPay: false, errorPay: '' };
+    case 'DELIVER_REQUEST':
+      return { ...state, loadingDeliver: true };
+    case 'DELIVER_SUCCESS':
+      return { ...state, loadingDeliver: false, successDeliver: true };
+    case 'DELIVER_FAIL':
+      return { ...state, loadingDeliver: false, errorDeliver: action.payload };
+    case 'DELIVER_RESET':
+      return {
+        ...state,
+        loadingDeliver: false,
+        successDeliver: false,
+        errorDeliver: '',
       };
-      document.body.appendChild(script);
+    default:
+      return state;
+  }
+}
+export default function OrderScreen() {
+  const params = useParams();
+  const navigate = useNavigate();
+  const { id: orderId } = params;
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+
+  const { userInfo } = useSelector((state) => state.userSignin);
+
+  const [
+    { loading, error, order, successPay, loadingDeliver, successDeliver },
+    dispatch,
+  ] = useReducer(reducer, {
+    loading: true,
+    order: {},
+    error: '',
+  });
+  const {
+    shippingAddress,
+    paymentMethod,
+    orderItems,
+    itemsPrice,
+    taxPrice,
+    shippingPrice,
+    totalPrice,
+    isPaid,
+    paidAt,
+    isDelivered,
+    deliveredAt,
+  } = order;
+
+  useEffect(() => {
+    if (!userInfo) {
+      return navigate('/login');
+    }
+    const fetchOrder = async () => {
+      try {
+        dispatch({ type: 'FETCH_REQUEST' });
+        const { data } = await Axios.get(`/api/orders/${orderId}`, {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        });
+        dispatch({ type: 'FETCH_SUCCESS', payload: data });
+      } catch (err) {
+        dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
+      }
     };
     if (
-      !order ||
+      !order._id ||
       successPay ||
       successDeliver ||
-      (order && order._id !== orderId)
+      (order._id && order._id !== orderId)
     ) {
-      dispatch({ type: ORDER_PAY_RESET });
-      dispatch({ type: ORDER_DELIVER_RESET });
-      dispatch(detailsOrder(orderId));
-    } else {
-      if (!order.isPaid) {
-        if (!window.paypal) {
-          addPayPalScript();
-        } else {
-          setSdkReady(true);
-        }
+      fetchOrder();
+      if (successPay) {
+        dispatch({ type: 'PAY_RESET' });
       }
+      if (successDeliver) {
+        dispatch({ type: 'DELIVER_RESET' });
+      }
+    } else {
+      const loadPaypalScript = async () => {
+        const { data: clientId } = await Axios.get('/api/keys/paypal', {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        });
+        paypalDispatch({
+          type: 'resetOptions',
+          value: {
+            'client-id': clientId,
+            currency: 'USD',
+          },
+        });
+        paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
+      };
+      loadPaypalScript();
     }
-  }, [dispatch, orderId, sdkReady, successPay, successDeliver, order]);
+  }, [
+    order,
+    successPay,
+    successDeliver,
+    userInfo,
+    orderId,
+    navigate,
+    paypalDispatch,
+  ]);
 
-  const successPaymentHandler = (paymentResult) => {
-    dispatch(payOrder(order, paymentResult));
-  };
-  const deliverHandler = () => {
-    dispatch(deliverOrder(order._id));
-  };
+  function createOrder(data, actions) {
+    return actions.order
+      .create({
+        purchase_units: [
+          {
+            amount: { value: totalPrice },
+          },
+        ],
+      })
+      .then((orderID) => {
+        return orderID;
+      });
+  }
+  function onApprove(data, actions) {
+    return actions.order.capture().then(async function (details) {
+      try {
+        dispatch({ type: 'PAY_REQUEST' });
+        const { data } = await Axios.put(
+          `/api/orders/${order._id}/pay`,
+          details,
+          {
+            headers: { authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+        dispatch({ type: 'PAY_SUCCESS', payload: data });
+
+        toast.success('Order is paid');
+      } catch (err) {
+        dispatch({ type: 'PAY_FAIL', payload: getError(err) });
+        toast.error(getError(err));
+      }
+    });
+  }
+
+  function onError(err) {
+    toast.error(getError(err));
+  }
+
+  async function deliverOrderHandler() {
+    try {
+      dispatch({ type: 'DELIVER_REQUEST' });
+      const { data } = await Axios.put(
+        `/api/orders/${order._id}/deliver`,
+        {},
+        {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        }
+      );
+      dispatch({ type: 'DELIVER_SUCCESS', payload: data });
+      toast.success('Order is delivered');
+    } catch (err) {
+      dispatch({ type: 'DELIVER_FAIL', payload: getError(err) });
+      toast.error(getError(err));
+    }
+  }
 
   return loading ? (
     <LoadingBox></LoadingBox>
@@ -80,141 +188,123 @@ export default function OrderScreen(props) {
     <MessageBox variant="danger">{error}</MessageBox>
   ) : (
     <div>
-      <h1>Order {order._id}</h1>
-      <div className="row top">
-        <div className="col-2">
-          <ul>
-            <li>
-              <div className="card card-body">
-                <h2>Shippring</h2>
-                <p>
-                  <strong>Name:</strong> {order.shippingAddress.fullName} <br />
-                  <strong>Address: </strong> {order.shippingAddress.address},
-                  {order.shippingAddress.city},{' '}
-                  {order.shippingAddress.postalCode},
-                  {order.shippingAddress.country}
-                </p>
-                {order.isDelivered ? (
-                  <MessageBox variant="success">
-                    Delivered at {order.deliveredAt}
-                  </MessageBox>
-                ) : (
-                  <MessageBox variant="danger">Not Delivered</MessageBox>
-                )}
-              </div>
-            </li>
-            <li>
-              <div className="card card-body">
-                <h2>Payment</h2>
-                <p>
-                  <strong>Method:</strong> {order.paymentMethod}
-                </p>
-                {order.isPaid ? (
-                  <MessageBox variant="success">
-                    Paid at {order.paidAt}
-                  </MessageBox>
-                ) : (
-                  <MessageBox variant="danger">Not Paid</MessageBox>
-                )}
-              </div>
-            </li>
-            <li>
-              <div className="card card-body">
-                <h2>Order Items</h2>
-                <ul>
-                  {order.orderItems.map((item) => (
-                    <li key={item.product}>
-                      <div className="row">
-                        <div>
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="small"
-                          ></img>
-                        </div>
-                        <div className="min-30">
-                          <Link to={`/product/${item.product}`}>
-                            {item.name}
-                          </Link>
-                        </div>
+      <h1 className="my-3">Order {orderId}</h1>
+      <div className="row">
+        <div className="col-md-8">
+          <div className="mb-3 card card-body">
+            <h2>Shipping</h2>
+            <p>
+              <strong>Name:</strong> {order.shippingAddress.fullName} <br />
+              <strong>Address: </strong> {order.shippingAddress.address},
+              {order.shippingAddress.city}, {order.shippingAddress.postalCode},
+              {order.shippingAddress.country}
+            </p>
+            {order.isDelivered ? (
+              <MessageBox variant="success">
+                Delivered at {order.deliveredAt}
+              </MessageBox>
+            ) : (
+              <MessageBox variant="danger">Not Delivered</MessageBox>
+            )}
+          </div>
 
-                        <div>
-                          {item.qty} x ${item.price} = ${item.qty * item.price}
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </li>
-          </ul>
+          <div className="mb-3 card card-body">
+            <h2>Payment</h2>
+            <p>
+              <strong>Method:</strong> {order.paymentMethod}
+            </p>
+            {order.isPaid ? (
+              <MessageBox variant="success">Paid at {order.paidAt}</MessageBox>
+            ) : (
+              <MessageBox variant="danger">Not Paid</MessageBox>
+            )}
+          </div>
+
+          <div className="mb-3 card card-body">
+            <h2>Items</h2>
+
+            <ul className="list-group list-group-flush">
+              {order.orderItems.map((item) => (
+                <li className="list-group-item" key={item.product}>
+                  <div className="row align-items-center">
+                    <div className="col-md-6">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="img-fluid rounded img-thumbnail"
+                      ></img>{' '}
+                      <Link to={`/product/${item.product}`}>{item.name}</Link>
+                    </div>
+                    <div className="col-md-3">
+                      <span>{item.qty}</span>
+                    </div>
+                    <div className="col-md-3">${item.price}</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <div className="col-1">
+        <div className="col-md-4">
           <div className="card card-body">
-            <ul>
-              <li>
-                <h2>Order Summary</h2>
-              </li>
-              <li>
+            <h2>Order Summary</h2>
+            <ul className="list-group list-group-flush">
+              <li className="list-group-item">
                 <div className="row">
-                  <div>Items</div>
-                  <div>${order.itemsPrice.toFixed(2)}</div>
+                  <div className="col">Items</div>
+                  <div className="col">${order.itemsPrice.toFixed(2)}</div>
                 </div>
               </li>
-              <li>
+              <li className="list-group-item">
                 <div className="row">
-                  <div>Shipping</div>
-                  <div>${order.shippingPrice.toFixed(2)}</div>
+                  <div className="col">Shipping</div>
+                  <div className="col">${order.shippingPrice.toFixed(2)}</div>
                 </div>
               </li>
-              <li>
+              <li className="list-group-item">
                 <div className="row">
-                  <div>Tax</div>
-                  <div>${order.taxPrice.toFixed(2)}</div>
+                  <div className="col">Tax</div>
+                  <div className="col">${order.taxPrice.toFixed(2)}</div>
                 </div>
               </li>
-              <li>
+              <li className="list-group-item">
                 <div className="row">
-                  <div>
+                  <div className="col">
                     <strong> Order Total</strong>
                   </div>
-                  <div>
+                  <div className="col">
                     <strong>${order.totalPrice.toFixed(2)}</strong>
                   </div>
                 </div>
               </li>
-              {!order.isPaid && (
-                <li>
-                  {!sdkReady ? (
-                    <LoadingBox></LoadingBox>
-                  ) : (
-                    <>
-                      {errorPay && (
-                        <MessageBox variant="danger">{errorPay}</MessageBox>
-                      )}
-                      {loadingPay && <LoadingBox></LoadingBox>}
 
-                      <PayPalButton
-                        amount={order.totalPrice}
-                        onSuccess={successPaymentHandler}
-                      ></PayPalButton>
-                    </>
+              {!order.isPaid && (
+                <li className="list-group-item">
+                  {isPending ? (
+                    <LoadingBox />
+                  ) : (
+                    <div>
+                      <PayPalButtons
+                        createOrder={createOrder}
+                        onApprove={onApprove}
+                        onError={onError}
+                      ></PayPalButtons>
+                    </div>
                   )}
                 </li>
               )}
               {userInfo.isAdmin && order.isPaid && !order.isDelivered && (
-                <li>
+                <li className="list-group-item">
                   {loadingDeliver && <LoadingBox></LoadingBox>}
-                  {errorDeliver && (
-                    <MessageBox variant="danger">{errorDeliver}</MessageBox>
-                  )}
-                  <button
-                    type="button"
-                    className="primary block"
-                    onClick={deliverHandler}
-                  >
-                    Deliver Order
-                  </button>
+                  <div className="d-grid">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={deliverOrderHandler}
+                    >
+                      Deliver Order
+                    </button>
+                  </div>
                 </li>
               )}
             </ul>

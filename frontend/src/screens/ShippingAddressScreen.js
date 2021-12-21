@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { saveShippingAddress } from '../actions/cartActions';
-import CheckoutSteps from '../components/CheckoutSteps';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { saveShippingAddress } from "../actions/cartActions";
+import CheckoutSteps from "../components/CheckoutSteps";
 
-export default function ShippingAddressScreen(props) {
+export default function ShippingAddressScreen() {
   const navigate = useNavigate();
   const userSignin = useSelector((state) => state.userSignin);
 
@@ -17,15 +17,15 @@ export default function ShippingAddressScreen(props) {
   const { address: addressMap } = userAddressMap;
 
   if (!userInfo) {
-    navigate('/signin');
+    navigate("/signin");
   }
-  const [fullName, setFullName] = useState(shippingAddress.fullName || '');
-  const [address, setAddress] = useState(shippingAddress.address || '');
-  const [city, setCity] = useState(shippingAddress.city || '');
+  const [fullName, setFullName] = useState(shippingAddress.fullName || "");
+  const [address, setAddress] = useState(shippingAddress.address || "");
+  const [city, setCity] = useState(shippingAddress.city || "");
   const [postalCode, setPostalCode] = useState(
-    shippingAddress.postalCode || ''
+    shippingAddress.postalCode || ""
   );
-  const [country, setCountry] = useState(shippingAddress.country || '');
+  const [country, setCountry] = useState(shippingAddress.country || "");
   const dispatch = useDispatch();
   const submitHandler = (e) => {
     e.preventDefault();
@@ -36,11 +36,11 @@ export default function ShippingAddressScreen(props) {
       setLng(addressMap.lng);
     }
     let moveOn = true;
-    if (!newLat || !newLng) {
-      moveOn = window.confirm(
-        'You did not set your location on map. Continue?'
-      );
-    }
+    // if (!newLat || !newLng) {
+    //   moveOn = window.confirm(
+    //     "You did not set your location on map. Continue?"
+    //   );
+    // }
     if (moveOn) {
       dispatch(
         saveShippingAddress({
@@ -53,7 +53,7 @@ export default function ShippingAddressScreen(props) {
           lng: newLng,
         })
       );
-      navigate('/payment');
+      navigate("/payment");
     }
   };
   const chooseOnMap = () => {
@@ -68,83 +68,106 @@ export default function ShippingAddressScreen(props) {
         lng,
       })
     );
-    navigate('/map');
+    navigate("/map");
   };
   return (
     <div>
       <CheckoutSteps step1 step2></CheckoutSteps>
-      <form className="form" onSubmit={submitHandler}>
-        <div>
-          <h1>Shipping Address</h1>
-        </div>
-        <div>
-          <label htmlFor="fullName">Full Name</label>
-          <input
-            type="text"
-            id="fullName"
-            placeholder="Enter full name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            required
-          ></input>
-        </div>
-        <div>
-          <label htmlFor="address">Address</label>
-          <input
-            type="text"
-            id="address"
-            placeholder="Enter address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            required
-          ></input>
-        </div>
-        <div>
-          <label htmlFor="city">City</label>
-          <input
-            type="text"
-            id="city"
-            placeholder="Enter city"
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            required
-          ></input>
-        </div>
-        <div>
-          <label htmlFor="postalCode">Postal Code</label>
-          <input
-            type="text"
-            id="postalCode"
-            placeholder="Enter postal code"
-            value={postalCode}
-            onChange={(e) => setPostalCode(e.target.value)}
-            required
-          ></input>
-        </div>
-        <div>
-          <label htmlFor="country">Country</label>
-          <input
-            type="text"
-            id="country"
-            placeholder="Enter country"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            required
-          ></input>
-        </div>
-        <div>
-          <label htmlFor="chooseOnMap">Location</label>
-          <button type="button" onClick={chooseOnMap}>
-            Choose On Map
-          </button>
-        </div>
-        <div>
-          <label />
-          <button className="primary" type="submit">
-            Continue
-          </button>
-        </div>
-      </form>
+      <div className="container small-container">
+        <h1 className="my-3">Shipping Address</h1>
+
+        <form onSubmit={submitHandler}>
+          <div className="mb-3">
+            <label htmlFor="fullName" className="form-label">
+              Full Name
+            </label>
+            <input
+              type="text"
+              id="fullName"
+              placeholder="Enter full name"
+              className="form-control"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+            ></input>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="address" className="form-label">
+              Address
+            </label>
+            <input
+              type="text"
+              id="address"
+              placeholder="Enter Address"
+              className="form-control"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              required
+            ></input>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="city" className="form-label">
+              City
+            </label>
+            <input
+              type="text"
+              id="city"
+              placeholder="Enter City"
+              className="form-control"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              required
+            ></input>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="postalCode" className="form-label">
+              Postal Code
+            </label>
+            <input
+              type="text"
+              id="postalCode"
+              placeholder="Enter Postal Code"
+              className="form-control"
+              value={postalCode}
+              onChange={(e) => setPostalCode(e.target.value)}
+              required
+            ></input>
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="country" className="form-label">
+              Country
+            </label>
+            <input
+              type="text"
+              id="country"
+              placeholder="Enter Country"
+              className="form-control"
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              required
+            ></input>
+          </div>
+
+          <div className="mb-3">
+            <button
+              id="chooseOnMap"
+              type="button"
+              className="btn btn-light"
+              onClick={chooseOnMap}
+            >
+              Choose Location On Map
+            </button>
+          </div>
+
+          <div className="mb-3">
+            <label />
+            <button className="btn btn-primary" type="submit">
+              Continue
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

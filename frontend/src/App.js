@@ -1,38 +1,38 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { BrowserRouter, Link, Route, Routes } from "react-router-dom";
-import { signout } from "./actions/userActions";
-import AdminRoute from "./components/AdminRoute";
-import PrivateRoute from "./components/PrivateRoute";
-import CartScreen from "./screens/CartScreen";
-import HomeScreen from "./screens/HomeScreen";
-import OrderHistoryScreen from "./screens/OrderHistoryScreen";
-import OrderScreen from "./screens/OrderScreen";
-import PaymentMethodScreen from "./screens/PaymentMethodScreen";
-import PlaceOrderScreen from "./screens/PlaceOrderScreen";
-import ProductListScreen from "./screens/ProductListScreen";
-import ProductScreen from "./screens/ProductScreen";
-import ProfileScreen from "./screens/ProfileScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import ShippingAddressScreen from "./screens/ShippingAddressScreen";
-import SigninScreen from "./screens/SigninScreen";
-import ProductEditScreen from "./screens/ProductEditScreen";
-import OrderListScreen from "./screens/OrderListScreen";
-import UserListScreen from "./screens/UserListScreen";
-import UserEditScreen from "./screens/UserEditScreen";
-import SellerRoute from "./components/SellerRoute";
-import SellerScreen from "./screens/SellerScreen";
-import SearchBox from "./components/SearchBox";
-import SearchScreen from "./screens/SearchScreen";
-import { listProductCategories } from "./actions/productActions";
-import LoadingBox from "./components/LoadingBox";
-import MessageBox from "./components/MessageBox";
-import MapScreen from "./screens/MapScreen";
-import DashboardScreen from "./screens/DashboardScreen";
-import SupportScreen from "./screens/SupportScreen";
-import ChatBox from "./components/ChatBox";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
+import { signout } from './actions/userActions';
+import AdminRoute from './components/AdminRoute';
+import PrivateRoute from './components/PrivateRoute';
+import CartScreen from './screens/CartScreen';
+import HomeScreen from './screens/HomeScreen';
+import OrderHistoryScreen from './screens/OrderHistoryScreen';
+import OrderScreen from './screens/OrderScreen';
+import PaymentMethodScreen from './screens/PaymentMethodScreen';
+import PlaceOrderScreen from './screens/PlaceOrderScreen';
+import ProductListScreen from './screens/ProductListScreen';
+import ProductScreen from './screens/ProductScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import ShippingAddressScreen from './screens/ShippingAddressScreen';
+import SigninScreen from './screens/SigninScreen';
+import ProductEditScreen from './screens/ProductEditScreen';
+import OrderListScreen from './screens/OrderListScreen';
+import UserListScreen from './screens/UserListScreen';
+import UserEditScreen from './screens/UserEditScreen';
+import SellerRoute from './components/SellerRoute';
+import SellerScreen from './screens/SellerScreen';
+import SearchBox from './components/SearchBox';
+import SearchScreen from './screens/SearchScreen';
+import { listProductCategories } from './actions/productActions';
+import LoadingBox from './components/LoadingBox';
+import MessageBox from './components/MessageBox';
+import MapScreen from './screens/MapScreen';
+import DashboardScreen from './screens/DashboardScreen';
+import SupportScreen from './screens/SupportScreen';
+import ChatBox from './components/ChatBox';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const cart = useSelector((state) => state.cart);
@@ -59,11 +59,11 @@ function App() {
       <div
         className={
           sidebarIsOpen
-            ? "site-container active-cont d-flex flex-column"
-            : "site-container d-flex flex-column"
+            ? 'site-container active-cont d-flex flex-column'
+            : 'site-container d-flex flex-column'
         }
       >
-        <ToastContainer position="bottom-center" />
+        <ToastContainer position="bottom-center" limit={1} />
         <header>
           <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
@@ -226,7 +226,7 @@ function App() {
                         </li>
 
                         <li>
-                          <Link className="dropdown-item" to="/users">
+                          <Link className="dropdown-item" to="/userlist">
                             Users
                           </Link>
                         </li>
@@ -242,8 +242,8 @@ function App() {
         <div
           className={
             sidebarIsOpen
-              ? " active-nav side-navbar  d-flex justify-content-between flex-wrap flex-column"
-              : "side-navbar d-flex justify-content-between flex-wrap flex-column"
+              ? ' active-nav side-navbar  d-flex justify-content-between flex-wrap flex-column'
+              : 'side-navbar d-flex justify-content-between flex-wrap flex-column'
           }
         >
           <ul className="nav flex-column text-white w-100 p-2">
@@ -269,20 +269,16 @@ function App() {
           </ul>
         </div>
 
-        <main className="container-fluid flex-fill mt-3">
+        <main className="container mt-3">
           <Routes>
             <Route path="/seller/:id" element={<SellerScreen />}></Route>
             <Route path="/cart" element={<CartScreen />}></Route>
             <Route path="/cart/:id" element={<CartScreen />}></Route>
-            <Route
-              path="/product/:id"
-              element={<ProductScreen />}
-              exact
-            ></Route>
+
+            <Route path="/product/:id" element={<ProductScreen />}></Route>
             <Route
               path="/product/:id/edit"
-              element={ProductEditScreen}
-              exact
+              element={<ProductEditScreen />}
             ></Route>
             <Route path="/signin" element={<SigninScreen />}></Route>
             <Route path="/register" element={<RegisterScreen />}></Route>
@@ -294,26 +290,18 @@ function App() {
               path="/orderhistory"
               element={<OrderHistoryScreen />}
             ></Route>
-            <Route path="/search/name" element={<SearchScreen />} exact></Route>
+            <Route path="/search" element={<SearchScreen />}></Route>
             <Route
-              path="/search/name/:name"
+              path="/search/query/:query"
               element={<SearchScreen />}
-              exact
             ></Route>
             <Route
               path="/search/category/:category"
               element={<SearchScreen />}
-              exact
             ></Route>
             <Route
               path="/search/category/:category/name/:name"
               element={<SearchScreen />}
-              exact
-            ></Route>
-            <Route
-              path="/search/category/:category/name/:name/min/:min/max/:max/rating/:rating/order/:order/pageNumber/:pageNumber"
-              element={<SearchScreen />}
-              exact
             ></Route>
 
             <Route
@@ -407,7 +395,7 @@ function App() {
               }
             />
 
-            <Route path="/" element={<HomeScreen />} exact></Route>
+            <Route path="/" element={<HomeScreen />}></Route>
           </Routes>
         </main>
         <footer>

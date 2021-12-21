@@ -89,112 +89,131 @@ export default function ProductEditScreen(props) {
   };
 
   return (
-    <div>
-      <form className="form" onSubmit={submitHandler}>
-        <div>
-          <h1>Edit Product {productId}</h1>
-        </div>
-        {loadingUpdate && <LoadingBox></LoadingBox>}
-        {errorUpdate && <MessageBox variant="danger">{errorUpdate}</MessageBox>}
-        {loading ? (
-          <LoadingBox></LoadingBox>
-        ) : error ? (
-          <MessageBox variant="danger">{error}</MessageBox>
-        ) : (
-          <>
-            <div>
-              <label htmlFor="name">Name</label>
-              <input
-                id="name"
-                type="text"
-                placeholder="Enter name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              ></input>
-            </div>
-            <div>
-              <label htmlFor="price">Price</label>
-              <input
-                id="price"
-                type="text"
-                placeholder="Enter price"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-              ></input>
-            </div>
-            <div>
-              <label htmlFor="image">Image</label>
-              <input
-                id="image"
-                type="text"
-                placeholder="Enter image"
-                value={image}
-                onChange={(e) => setImage(e.target.value)}
-              ></input>
-            </div>
-            <div>
-              <label htmlFor="imageFile">Image File</label>
-              <input
-                type="file"
-                id="imageFile"
-                label="Choose Image"
-                onChange={uploadFileHandler}
-              ></input>
-              {loadingUpload && <LoadingBox></LoadingBox>}
-              {errorUpload && (
-                <MessageBox variant="danger">{errorUpload}</MessageBox>
-              )}
-            </div>
-            <div>
-              <label htmlFor="category">Category</label>
-              <input
-                id="category"
-                type="text"
-                placeholder="Enter category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              ></input>
-            </div>
-            <div>
-              <label htmlFor="brand">Brand</label>
-              <input
-                id="brand"
-                type="text"
-                placeholder="Enter brand"
-                value={brand}
-                onChange={(e) => setBrand(e.target.value)}
-              ></input>
-            </div>
-            <div>
-              <label htmlFor="countInStock">Count In Stock</label>
-              <input
-                id="countInStock"
-                type="text"
-                placeholder="Enter countInStock"
-                value={countInStock}
-                onChange={(e) => setCountInStock(e.target.value)}
-              ></input>
-            </div>
-            <div>
-              <label htmlFor="description">Description</label>
-              <textarea
-                id="description"
-                rows="3"
-                type="text"
-                placeholder="Enter description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              ></textarea>
-            </div>
-            <div>
-              <label></label>
-              <button className="primary" type="submit">
-                Update
-              </button>
-            </div>
-          </>
-        )}
-      </form>
+    <div className="container small-container">
+      <h1>Edit Product {productId}</h1>
+      {loading ? (
+        <LoadingBox></LoadingBox>
+      ) : error ? (
+        <MessageBox variant="danger">{error}</MessageBox>
+      ) : (
+        <form onSubmit={submitHandler}>
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label">
+              Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              placeholder="Enter name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="form-control"
+            ></input>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="price" className="form-label">
+              Price
+            </label>
+            <input
+              id="price"
+              type="text"
+              placeholder="Enter price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="form-control"
+            ></input>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="image" className="form-label">
+              Image
+            </label>
+            <input
+              id="image"
+              type="text"
+              placeholder="Enter image"
+              value={image}
+              onChange={(e) => setImage(e.target.value)}
+              className="form-control"
+            ></input>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="imageFile" className="form-label">
+              Image File
+            </label>
+            <input
+              id="imageFile"
+              type="file"
+              placeholder="Choose Image"
+              onChange={uploadFileHandler}
+              className="form-control"
+            ></input>
+            {loadingUpload && <LoadingBox></LoadingBox>}
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="category" className="form-label">
+              Category
+            </label>
+            <input
+              id="category"
+              type="text"
+              placeholder="Enter category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="form-control"
+            ></input>
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="brand" className="form-label">
+              Brand
+            </label>
+            <input
+              id="brand"
+              type="text"
+              placeholder="Enter brand"
+              value={brand}
+              onChange={(e) => setBrand(e.target.value)}
+              className="form-control"
+            ></input>
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="countInStock" className="form-label">
+              Count In Stock
+            </label>
+            <input
+              id="countInStock"
+              type="text"
+              placeholder="Enter countInStock"
+              value={countInStock}
+              onChange={(e) => setCountInStock(e.target.value)}
+              className="form-control"
+            ></input>
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="description" className="form-label">
+              Description
+            </label>
+            <textarea
+              id="description"
+              type="text"
+              placeholder="Enter description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="form-control"
+            ></textarea>
+          </div>
+
+          <div>
+            <label></label>
+            <button className="btn btn-primary" type="submit">
+              Update
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }

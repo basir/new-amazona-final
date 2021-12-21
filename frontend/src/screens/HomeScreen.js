@@ -1,36 +1,67 @@
-import React, { useEffect } from "react";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from "react-responsive-carousel";
-import Product from "../components/Product";
-import LoadingBox from "../components/LoadingBox";
-import MessageBox from "../components/MessageBox";
-import { useDispatch, useSelector } from "react-redux";
-import { listProducts } from "../actions/productActions";
-import { listTopSellers } from "../actions/userActions";
-import { Link } from "react-router-dom";
+import React, { useEffect, useReducer } from 'react';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import { Carousel } from 'react-responsive-carousel';
+import Product from '../components/Product';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
+import { Link } from 'react-router-dom';
+import Axios from 'axios';
+import { getError } from '../utils';
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true };
+    case 'FETCH_SUCCESS':
+      return {
+        ...state,
+        products: action.payload.products,
+        sellers: action.payload.sellers,
+        loading: false,
+      };
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
+
+    default:
+      return state;
+  }
+};
 
 export default function HomeScreen() {
-  const dispatch = useDispatch();
-  const productList = useSelector((state) => state.productList);
-  const { loading, error, products } = productList;
-  const userTopSellersList = useSelector((state) => state.userTopSellersList);
-  const {
-    loading: loadingSellers,
-    error: errorSellers,
-    users: sellers,
-  } = userTopSellersList;
+  const [{ loading, error, products, sellers }, dispatch] = useReducer(
+    reducer,
+    {
+      loading: true,
+      error: '',
+    }
+  );
 
   useEffect(() => {
-    dispatch(listProducts({}));
-    dispatch(listTopSellers());
+    const fetchData = async () => {
+      dispatch({ type: 'FETCH_REQUEST' });
+      try {
+        const { data: products } = await Axios.get(
+          '/api/products/top-products'
+        );
+        const { data: sellers } = await Axios.get('/api/users/top-sellers');
+        dispatch({ type: 'FETCH_SUCCESS', payload: { products, sellers } });
+      } catch (error) {
+        dispatch({
+          type: 'FETCH_FAIL',
+          payload: getError(error),
+        });
+      }
+    };
+
+    fetchData();
   }, [dispatch]);
+
   return (
     <div>
-      {/* <h2>Top Sellers</h2>
-      {loadingSellers ? (
+      {loading ? (
         <LoadingBox></LoadingBox>
-      ) : errorSellers ? (
-        <MessageBox variant="danger">{errorSellers}</MessageBox>
+      ) : error ? (
+        <MessageBox variant="danger">{error}</MessageBox>
       ) : (
         <>
           {sellers.length === 0 && <MessageBox>No Seller Found</MessageBox>}
@@ -44,25 +75,17 @@ export default function HomeScreen() {
               </div>
             ))}
           </Carousel>
-        </>
-      )} */}
-      <h2>Featured Products</h2>
-      {loading ? (
-        <LoadingBox></LoadingBox>
-      ) : error ? (
-        <MessageBox variant="danger">{error}</MessageBox>
-      ) : (
-        <>
+          <h2>Featured Products</h2>
           {products.length === 0 && <MessageBox>No Product Found</MessageBox>}
-
-          <div class="container">
-            <div class="row">
-              {products.map((product) => (
-                <div class="col col-3 mb-3">
-                  <Product key={product._id} product={product}></Product>
-                </div>
-              ))}
-            </div>
+          <div className="row">
+            {products.map((product) => (
+              <div
+                key={product._id}
+                className="col-sm-6 col-md-4  col-lg-3  mb-3"
+              >
+                <Product product={product}></Product>
+              </div>
+            ))}
           </div>
         </>
       )}

@@ -39,6 +39,8 @@ export const userRegisterReducer = (state = {}, action) => {
       return { loading: false, userInfo: action.payload };
     case USER_REGISTER_FAIL:
       return { loading: false, error: action.payload };
+    case 'USER_REGISTER_RESET':
+      return { loading: false, error: '' };
     default:
       return state;
   }
@@ -54,6 +56,8 @@ export const userSigninReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
     case USER_SIGNOUT:
       return {};
+    case 'USER_SIGNIN_RESET':
+      return { loading: false, error: '' };
     default:
       return state;
   }
@@ -81,7 +85,7 @@ export const userUpdateProfileReducer = (state = {}, action) => {
     case USER_UPDATE_PROFILE_FAIL:
       return { loading: false, error: action.payload };
     case USER_UPDATE_PROFILE_RESET:
-      return {};
+      return { loading: false, success: false, error: '' };
     default:
       return state;
   }

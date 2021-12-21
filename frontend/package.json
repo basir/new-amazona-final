@@ -25,6 +25,7 @@
     ]
   },
   "dependencies": {
+    "@paypal/react-paypal-js": "^7.5.0",
     "@react-google-maps/api": "^2.7.0",
     "@testing-library/jest-dom": "^5.15.1",
     "@testing-library/react": "^12.1.2",

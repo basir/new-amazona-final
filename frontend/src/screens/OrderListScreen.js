@@ -69,16 +69,17 @@ export default function OrderListScreen(props) {
                 <td>
                   <button
                     type="button"
-                    className="small"
+                    className="btn btn-light"
                     onClick={() => {
                       navigate(`/order/${order._id}`);
                     }}
                   >
                     Details
                   </button>
+                  &nbsp;
                   <button
                     type="button"
-                    className="small"
+                    className="btn btn-light"
                     onClick={() => deleteHandler(order)}
                   >
                     Delete

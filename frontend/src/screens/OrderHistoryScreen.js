@@ -5,7 +5,7 @@ import { listOrderMine } from '../actions/orderActions';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 
-export default function OrderHistoryScreen(props) {
+export default function OrderHistoryScreen() {
   const navigate = useNavigate();
   const orderMineList = useSelector((state) => state.orderMineList);
   const { loading, error, orders } = orderMineList;
@@ -47,7 +47,7 @@ export default function OrderHistoryScreen(props) {
                 <td>
                   <button
                     type="button"
-                    className="small"
+                    className="btn btn-light"
                     onClick={() => {
                       navigate(`/order/${order._id}`);
                     }}

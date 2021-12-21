@@ -1,6 +1,4 @@
-import React from 'react';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { detailsUser, updateUser } from '../actions/userActions';
@@ -50,67 +48,79 @@ export default function UserEditScreen(props) {
     dispatch(updateUser({ _id: userId, name, email, isSeller, isAdmin }));
   };
   return (
-    <div>
-      <form className="form" onSubmit={submitHandler}>
-        <div>
-          <h1>Edit User {name}</h1>
+    <div className="container small-container">
+      <h1 className="my-3">Edit User {userId}</h1>
+      {loading ? (
+        <LoadingBox></LoadingBox>
+      ) : error ? (
+        <MessageBox variant="danger">{error}</MessageBox>
+      ) : (
+        <form onSubmit={submitHandler}>
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label">
+              Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              placeholder="Enter name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="form-control"
+            ></input>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="email" className="form-label">
+              Email
+            </label>
+            <input
+              id="email"
+              type="text"
+              placeholder="Enter email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="form-control"
+            ></input>
+          </div>
+
+          <div class="form-check mb-3">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="isAdmin"
+              checked={user.isAdmin}
+              onChange={(e) => setIsAdmin(e.target.checked)}
+            />
+            <label class="form-check-label" for="isAdmin">
+              Is Admin
+            </label>
+          </div>
+          <div class="form-check mb-3">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="isSeller"
+              checked={user.isSeller}
+              onChange={(e) => setIsSeller(e.target.checked)}
+            />
+            <label class="form-check-label" for="isSeller">
+              Is Seller
+            </label>
+          </div>
+
+          <div className="mb-3">
+            <label />
+            <button
+              className="btn btn-primary"
+              type="submit"
+              disabled={loadingUpdate}
+            >
+              Update
+            </button>
+          </div>
           {loadingUpdate && <LoadingBox></LoadingBox>}
-          {errorUpdate && (
-            <MessageBox variant="danger">{errorUpdate}</MessageBox>
-          )}
-        </div>
-        {loading ? (
-          <LoadingBox />
-        ) : error ? (
-          <MessageBox variant="danger">{error}</MessageBox>
-        ) : (
-          <>
-            <div>
-              <label htmlFor="name">Name</label>
-              <input
-                id="name"
-                type="text"
-                placeholder="Enter name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              ></input>
-            </div>
-            <div>
-              <label htmlFor="email">Email</label>
-              <input
-                id="email"
-                type="email"
-                placeholder="Enter email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              ></input>
-            </div>
-            <div>
-              <label htmlFor="isSeller">Is Seller</label>
-              <input
-                id="isSeller"
-                type="checkbox"
-                checked={isSeller}
-                onChange={(e) => setIsSeller(e.target.checked)}
-              ></input>
-            </div>
-            <div>
-              <label htmlFor="isAdmin">Is Admin</label>
-              <input
-                id="isAdmin"
-                type="checkbox"
-                checked={isAdmin}
-                onChange={(e) => setIsAdmin(e.target.checked)}
-              ></input>
-            </div>
-            <div>
-              <button type="submit" className="primary">
-                Update
-              </button>
-            </div>
-          </>
-        )}
-      </form>
+        </form>
+      )}
     </div>
   );
 }

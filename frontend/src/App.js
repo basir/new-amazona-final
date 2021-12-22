@@ -258,7 +258,7 @@ function App() {
               categories.map((c) => (
                 <li key={c} className="nav-link">
                   <Link
-                    to={`/search/category/${c}`}
+                    to={`/search?category=${c}`}
                     onClick={() => setSidebarIsOpen(false)}
                   >
                     {c}
@@ -291,18 +291,6 @@ function App() {
               element={<OrderHistoryScreen />}
             ></Route>
             <Route path="/search" element={<SearchScreen />}></Route>
-            <Route
-              path="/search/query/:query"
-              element={<SearchScreen />}
-            ></Route>
-            <Route
-              path="/search/category/:category"
-              element={<SearchScreen />}
-            ></Route>
-            <Route
-              path="/search/category/:category/name/:name"
-              element={<SearchScreen />}
-            ></Route>
 
             <Route
               path="/profile"
@@ -330,14 +318,6 @@ function App() {
               }
             />
 
-            <Route
-              path="/productlist/pageNumber/:pageNumber"
-              element={
-                <AdminRoute>
-                  <ProductListScreen />
-                </AdminRoute>
-              }
-            />
             <Route
               path="/orderlist"
               element={

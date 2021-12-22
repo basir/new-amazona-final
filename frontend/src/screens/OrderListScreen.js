@@ -1,41 +1,105 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import Axios from 'axios';
+import React, { useEffect, useReducer } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { deleteOrder, listOrders } from '../actions/orderActions';
+import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { ORDER_DELETE_RESET } from '../constants/orderConstants';
+import { getError } from '../utils';
 
-export default function OrderListScreen(props) {
-  const navigate = useNavigate();
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true };
+    case 'FETCH_SUCCESS':
+      return {
+        ...state,
+        orders: action.payload,
+        loading: false,
+      };
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
+    case 'CREATE_REQUEST':
+      return { ...state, loadingCreate: true };
+    case 'CREATE_SUCCESS':
+      return {
+        ...state,
+        loadingCreate: false,
+      };
+    case 'CREATE_FAIL':
+      return { ...state, loadingCreate: false };
+    case 'DELETE_REQUEST':
+      return { ...state, loadingDelete: true, successDelete: false };
+    case 'DELETE_SUCCESS':
+      return {
+        ...state,
+        loadingDelete: false,
+        successDelete: true,
+      };
+    case 'DELETE_FAIL':
+      return { ...state, loadingDelete: false };
+    default:
+      return state;
+  }
+};
+
+export default function OrderListScreen() {
   const { pathname } = useLocation();
   const sellerMode = pathname.indexOf('/seller') >= 0;
-  const orderList = useSelector((state) => state.orderList);
-  const { loading, error, orders } = orderList;
-  const orderDelete = useSelector((state) => state.orderDelete);
-  const {
-    loading: loadingDelete,
-    error: errorDelete,
-    success: successDelete,
-  } = orderDelete;
+  const [{ loading, error, orders, loadingDelete, successDelete }, dispatch] =
+    useReducer(reducer, {
+      loading: true,
+      error: '',
+    });
+
+  const navigate = useNavigate();
 
   const userSignin = useSelector((state) => state.userSignin);
   const { userInfo } = userSignin;
-  const dispatch = useDispatch();
+
   useEffect(() => {
-    dispatch({ type: ORDER_DELETE_RESET });
-    dispatch(listOrders({ seller: sellerMode ? userInfo._id : '' }));
-  }, [dispatch, sellerMode, successDelete, userInfo._id]);
-  const deleteHandler = (order) => {
+    const fetchData = async () => {
+      dispatch({ type: 'FETCH_REQUEST' });
+      try {
+        const { data } = await Axios.get(
+          `/api/orders?sellerMode=${sellerMode}`,
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+        dispatch({ type: 'FETCH_SUCCESS', payload: data });
+      } catch (error) {
+        dispatch({
+          type: 'FETCH_FAIL',
+          payload: getError(error),
+        });
+      }
+    };
+    fetchData();
+  }, [dispatch, sellerMode, successDelete, userInfo]);
+
+  const deleteHandler = async (order) => {
     if (window.confirm('Are you sure to delete?')) {
-      dispatch(deleteOrder(order._id));
+      dispatch({ type: 'DELETE_REQUEST' });
+      try {
+        await Axios.delete(`/api/orders/${order._id}`, {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
+        toast.success('order deleted successfully');
+        dispatch({ type: 'DELETE_SUCCESS' });
+      } catch (error) {
+        toast.error(getError(error));
+        dispatch({
+          type: 'DELETE_FAIL',
+        });
+      }
     }
   };
+
   return (
     <div>
       <h1>Orders</h1>
       {loadingDelete && <LoadingBox></LoadingBox>}
-      {errorDelete && <MessageBox variant="danger">{errorDelete}</MessageBox>}
       {loading ? (
         <LoadingBox></LoadingBox>
       ) : error ? (

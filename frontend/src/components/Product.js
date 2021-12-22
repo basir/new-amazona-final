@@ -19,9 +19,11 @@ export default function Product(props) {
           ></Rating>
         </div>
         <div className="price">${product.price}</div>
-        <Link to={`/seller/${product.seller._id}`}>
-          {product.seller.seller.name}
-        </Link>
+        {product.seller && product.seller.seller && (
+          <Link to={`/seller/${product.seller._id}`}>
+            {product.seller.seller.name}
+          </Link>
+        )}
       </div>
     </div>
   );

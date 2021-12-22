@@ -17,6 +17,7 @@ productRouter.get(
     res.send(products);
   })
 );
+
 const PAGE_SIZE = 3;
 productRouter.get(
   '/',
@@ -49,7 +50,6 @@ productRouter.get(
             },
           }
         : {};
-    // 10-50
     const priceFilter =
       price && price !== 'all'
         ? {
@@ -91,6 +91,35 @@ productRouter.get(
       ...priceFilter,
       ...brandFilter,
       ...ratingFilter,
+    });
+    res.send({
+      products,
+      countProducts,
+      page,
+      pages: Math.ceil(countProducts / pageSize),
+    });
+  })
+);
+
+productRouter.get(
+  '/admin',
+  isAuth,
+  isSellerOrAdmin,
+  expressAsyncHandler(async ({ query, user }, res) => {
+    const pageSize = query.pageSize || PAGE_SIZE;
+    const page = query.page || 1;
+
+    const sellerFilter = query.sellerMode ? { seller: user._id } : {};
+
+    const products = await Product.find({
+      ...sellerFilter,
+    })
+      .populate('seller', 'seller.name seller.logo')
+      .skip(pageSize * (page - 1))
+      .limit(pageSize);
+
+    const countProducts = await Product.countDocuments({
+      ...sellerFilter,
     });
     res.send({
       products,

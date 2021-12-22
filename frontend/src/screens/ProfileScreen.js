@@ -1,79 +1,110 @@
-import React, { useEffect, useState } from 'react';
+import Axios from 'axios';
+import React, { useEffect, useReducer, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { detailsUser, updateUserProfile } from '../actions/userActions';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { USER_UPDATE_PROFILE_RESET } from '../constants/userConstants';
+import { getError } from '../utils';
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true };
+    case 'FETCH_SUCCESS':
+      return { ...state, loading: false };
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
+    case 'UPDATE_REQUEST':
+      return { ...state, loadingUpdate: true };
+    case 'UPDATE_SUCCESS':
+      return { ...state, loadingUpdate: false };
+    case 'UPDATE_FAIL':
+      return { ...state, loadingUpdate: false };
+
+    default:
+      return state;
+  }
+};
 
 export default function ProfileScreen() {
+  const userSignin = useSelector((state) => state.userSignin);
+  const { userInfo } = userSignin;
+  const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
+    loading: true,
+    error: '',
+  });
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isSeller, setIsSeller] = useState('');
   const [sellerName, setSellerName] = useState('');
   const [sellerLogo, setSellerLogo] = useState('');
   const [sellerDescription, setSellerDescription] = useState('');
 
-  const userSignin = useSelector((state) => state.userSignin);
-  const { userInfo } = userSignin;
-  const userDetails = useSelector((state) => state.userDetails);
-  const { loading, error, user } = userDetails;
-  const userUpdateProfile = useSelector((state) => state.userUpdateProfile);
-  const {
-    success: successUpdate,
-    error: errorUpdate,
-    loading: loadingUpdate,
-  } = userUpdateProfile;
-  const dispatch = useDispatch();
+  const rdxDispatch = useDispatch();
 
   useEffect(() => {
-    if (errorUpdate) {
-      toast.error(errorUpdate);
-      dispatch({
-        type: 'USER_UPDATE_PROFILE_RESET',
-      });
-    } else if (successUpdate) {
-      toast.success('Profile Updated Successfully');
-      dispatch({
-        type: 'USER_UPDATE_PROFILE_RESET',
-      });
-    }
-  }, [dispatch, successUpdate, errorUpdate]);
-
-  useEffect(() => {
-    if (!user) {
-      dispatch({ type: USER_UPDATE_PROFILE_RESET });
-      dispatch(detailsUser(userInfo._id));
-    } else {
-      setName(user.name);
-      setEmail(user.email);
-      if (user.seller) {
-        setSellerName(user.seller.name);
-        setSellerLogo(user.seller.logo);
-        setSellerDescription(user.seller.description);
+    const fetchData = async () => {
+      dispatch({ type: 'FETCH_REQUEST' });
+      try {
+        const { data } = await Axios.get(`/api/users/${userInfo._id}`, {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
+        setName(data.name);
+        setEmail(data.email);
+        if (data.seller) {
+          setIsSeller(data.isSeller);
+          setSellerName(data.seller.name);
+          setSellerLogo(data.seller.logo);
+          setSellerDescription(data.seller.description);
+        }
+        dispatch({ type: 'FETCH_SUCCESS' });
+      } catch (error) {
+        dispatch({
+          type: 'FETCH_FAIL',
+          payload: getError(error),
+        });
       }
-    }
-  }, [dispatch, userInfo._id, user]);
-  const submitHandler = (e) => {
+    };
+    fetchData();
+  }, [dispatch, userInfo]);
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    // dispatch update profile
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
-    } else {
-      dispatch(
-        updateUserProfile({
-          userId: user._id,
-          name,
-          email,
-          password,
-          sellerName,
-          sellerLogo,
-          sellerDescription,
-        })
-      );
+    dispatch({ type: 'UPDATE_REQUEST' });
+    try {
+      if (password !== confirmPassword) {
+        toast.error('Passwords do not match');
+      } else {
+        const { data } = await Axios.put(
+          '/api/users/profile',
+          {
+            name,
+            email,
+            password,
+            sellerName,
+            sellerLogo,
+            sellerDescription,
+          },
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+        dispatch({
+          type: 'UPDATE_SUCCESS',
+        });
+
+        rdxDispatch({ type: 'USER_SIGNIN_SUCCESS', payload: data });
+        toast.success('User updated successfully');
+      }
+    } catch (error) {
+      toast.error(getError(error));
+      dispatch({ type: 'UPDATE_FAIL' });
     }
   };
+
   return (
     <div className="container small-container">
       <h1 className="my-3">User Profile</h1>
@@ -134,7 +165,7 @@ export default function ProfileScreen() {
             ></input>
           </div>
 
-          {user.isSeller && (
+          {isSeller && (
             <>
               <h2>Seller</h2>
 

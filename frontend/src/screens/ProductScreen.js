@@ -118,11 +118,7 @@ export default function ProductScreen(props) {
         top: reviewsRef.current.offsetTop,
       });
     } catch (error) {
-      toast.error(
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message
-      );
+      toast.error(getError(error));
       dispatch({ type: 'CREATE_FAIL' });
     }
   };

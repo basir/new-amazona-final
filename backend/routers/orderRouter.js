@@ -17,8 +17,7 @@ orderRouter.get(
   isAuth,
   isSellerOrAdmin,
   expressAsyncHandler(async (req, res) => {
-    const seller = req.query.seller || '';
-    const sellerFilter = seller ? { seller } : {};
+    const sellerFilter = req.query.sellerMode ? { seller: req.user._id } : {};
 
     const orders = await Order.find({ ...sellerFilter }).populate(
       'user',

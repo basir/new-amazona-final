@@ -1,26 +1,26 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { savePaymentMethod } from "../actions/cartActions";
-import CheckoutSteps from "../components/CheckoutSteps";
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { savePaymentMethod } from '../actions/cartActions';
+import CheckoutSteps from '../components/CheckoutSteps';
 
 export default function PaymentMethodScreen(props) {
   const navigate = useNavigate();
   const cart = useSelector((state) => state.cart);
   const { shippingAddress, paymentMethod } = cart;
   if (!shippingAddress.address) {
-    navigate("/shipping");
+    navigate('/shipping');
   }
 
   const [paymentMethodName, setPaymentMethod] = useState(
-    paymentMethod || "PayPal"
+    paymentMethod || 'PayPal'
   );
 
   const dispatch = useDispatch();
   const submitHandler = (e) => {
     e.preventDefault();
     dispatch(savePaymentMethod(paymentMethodName));
-    navigate("/placeorder");
+    navigate('/placeorder');
   };
   return (
     <div>
@@ -35,10 +35,10 @@ export default function PaymentMethodScreen(props) {
               name="paymentMethod"
               id="PayPal"
               value="PayPal"
-              checked={paymentMethodName === "PayPal"}
+              checked={paymentMethodName === 'PayPal'}
               onChange={(e) => setPaymentMethod(e.target.value)}
             />
-            <label className="form-check-label" for="PayPal">
+            <label className="form-check-label" htmlFor="PayPal">
               PayPal
             </label>
           </div>
@@ -49,10 +49,10 @@ export default function PaymentMethodScreen(props) {
               name="paymentMethod"
               id="Stripe"
               value="Stripe"
-              checked={paymentMethodName === "Stripe"}
+              checked={paymentMethodName === 'Stripe'}
               onChange={(e) => setPaymentMethod(e.target.value)}
             />
-            <label className="form-check-label" for="Stripe">
+            <label className="form-check-label" htmlFor="Stripe">
               Stripe
             </label>
           </div>

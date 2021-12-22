@@ -1,72 +1,138 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
-import {
-  createProduct,
-  deleteProduct,
-  listProducts,
-} from '../actions/productActions';
+import Axios from 'axios';
+import React, { useEffect, useReducer } from 'react';
+import { useSelector } from 'react-redux';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import {
-  PRODUCT_CREATE_RESET,
-  PRODUCT_DELETE_RESET,
-} from '../constants/productConstants';
+import { getError } from '../utils';
 
-export default function ProductListScreen(props) {
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true };
+    case 'FETCH_SUCCESS':
+      return {
+        ...state,
+        products: action.payload.products,
+        page: action.payload.page,
+        pages: action.payload.pages,
+        loading: false,
+      };
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
+    case 'CREATE_REQUEST':
+      return { ...state, loadingCreate: true };
+    case 'CREATE_SUCCESS':
+      return {
+        ...state,
+        loadingCreate: false,
+      };
+    case 'CREATE_FAIL':
+      return { ...state, loadingCreate: false };
+    case 'DELETE_REQUEST':
+      return { ...state, loadingDelete: true, successDelete: false };
+    case 'DELETE_SUCCESS':
+      return {
+        ...state,
+        loadingDelete: false,
+        successDelete: true,
+      };
+    case 'DELETE_FAIL':
+      return { ...state, loadingDelete: false };
+    default:
+      return state;
+  }
+};
+
+export default function ProductListScreen() {
+  const [
+    {
+      loading,
+      error,
+      products,
+      pages,
+      loadingDelete,
+      loadingCreate,
+      successDelete,
+    },
+    dispatch,
+  ] = useReducer(reducer, {
+    loading: true,
+    error: '',
+  });
+
   const navigate = useNavigate();
-  const { pageNumber = 1 } = useParams();
-  const { pathname } = useLocation();
+  const { search, pathname } = useLocation();
   const sellerMode = pathname.indexOf('/seller') >= 0;
-  const productList = useSelector((state) => state.productList);
-  const { loading, error, products, page, pages } = productList;
+  const sp = new URLSearchParams(search);
+  const page = sp.get('page') || 1;
 
-  const productCreate = useSelector((state) => state.productCreate);
-  const {
-    loading: loadingCreate,
-    error: errorCreate,
-    success: successCreate,
-    product: createdProduct,
-  } = productCreate;
-
-  const productDelete = useSelector((state) => state.productDelete);
-  const {
-    loading: loadingDelete,
-    error: errorDelete,
-    success: successDelete,
-  } = productDelete;
   const userSignin = useSelector((state) => state.userSignin);
   const { userInfo } = userSignin;
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (successCreate) {
-      dispatch({ type: PRODUCT_CREATE_RESET });
-      navigate(`/product/${createdProduct._id}/edit`);
-    }
-    if (successDelete) {
-      dispatch({ type: PRODUCT_DELETE_RESET });
-    }
-    dispatch(
-      listProducts({ seller: sellerMode ? userInfo._id : '', pageNumber })
-    );
-  }, [
-    createdProduct,
-    dispatch,
-    navigate,
-    sellerMode,
-    successCreate,
-    successDelete,
-    userInfo._id,
-    pageNumber,
-  ]);
 
-  const deleteHandler = (product) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      dispatch({ type: 'FETCH_REQUEST' });
+      try {
+        const { data } = await Axios.get(
+          `/api/products/admin?page=${page}&sellerMode=${sellerMode}`,
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+        dispatch({ type: 'FETCH_SUCCESS', payload: data });
+      } catch (error) {
+        dispatch({
+          type: 'FETCH_FAIL',
+          payload: getError(error),
+        });
+      }
+    };
+    fetchData();
+  }, [dispatch, page, sellerMode, successDelete, userInfo]);
+
+  const deleteHandler = async (product) => {
     if (window.confirm('Are you sure to delete?')) {
-      dispatch(deleteProduct(product._id));
+      dispatch({ type: 'DELETE_REQUEST' });
+      try {
+        await Axios.delete(`/api/products/${product._id}`, {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
+        toast.success('product deleted successfully');
+        dispatch({ type: 'DELETE_SUCCESS' });
+      } catch (error) {
+        toast.error(getError(error));
+        dispatch({
+          type: 'DELETE_FAIL',
+        });
+      }
     }
   };
-  const createHandler = () => {
-    dispatch(createProduct());
+
+  const createHandler = async () => {
+    if (window.confirm('Are you sure to create?')) {
+      dispatch({ type: 'CREATE_REQUEST' });
+      try {
+        const {
+          data: { product },
+        } = await Axios.post(
+          `/api/products`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${userInfo.token}` },
+          }
+        );
+        toast.success('product created successfully');
+        dispatch({ type: 'CREATE_SUCCESS' });
+        navigate(`/product/${product._id}/edit`);
+      } catch (error) {
+        toast.error(getError(error));
+        dispatch({
+          type: 'CREATE_FAIL',
+        });
+      }
+    }
   };
   return (
     <div>
@@ -84,7 +150,6 @@ export default function ProductListScreen(props) {
       </div>
 
       {loadingDelete && <LoadingBox></LoadingBox>}
-
       {loadingCreate && <LoadingBox></LoadingBox>}
 
       {loading ? (
@@ -132,12 +197,12 @@ export default function ProductListScreen(props) {
               ))}
             </tbody>
           </table>
-          <div className="row center pagination">
+          <div>
             {[...Array(pages).keys()].map((x) => (
               <Link
-                className={x + 1 === page ? 'active' : ''}
+                className={x + 1 === Number(page) ? 'btn text-bold' : 'btn'}
                 key={x + 1}
-                to={`/productlist/pageNumber/${x + 1}`}
+                to={`/productlist?page=${x + 1}`}
               >
                 {x + 1}
               </Link>

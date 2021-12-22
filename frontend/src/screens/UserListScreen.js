@@ -1,43 +1,90 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import Axios from 'axios';
+import React, { useEffect, useReducer } from 'react';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { deleteUser, listUsers } from '../actions/userActions';
+import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { USER_DETAILS_RESET } from '../constants/userConstants';
+import { getError } from '../utils';
 
-export default function UserListScreen(props) {
-  const navigate = useNavigate();
-  const userList = useSelector((state) => state.userList);
-  const { loading, error, users } = userList;
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true };
+    case 'FETCH_SUCCESS':
+      return {
+        ...state,
+        users: action.payload,
+        loading: false,
+      };
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
+    case 'DELETE_REQUEST':
+      return { ...state, loadingDelete: true, successDelete: false };
+    case 'DELETE_SUCCESS':
+      return {
+        ...state,
+        loadingDelete: false,
+        successDelete: true,
+      };
+    case 'DELETE_FAIL':
+      return { ...state, loadingDelete: false };
+    default:
+      return state;
+  }
+};
 
-  const userDelete = useSelector((state) => state.userDelete);
-  const {
-    loading: loadingDelete,
-    error: errorDelete,
-    success: successDelete,
-  } = userDelete;
-
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(listUsers());
-    dispatch({
-      type: USER_DETAILS_RESET,
+export default function UserListScreen() {
+  const [{ loading, error, users, loadingDelete, successDelete }, dispatch] =
+    useReducer(reducer, {
+      loading: true,
+      error: '',
     });
-  }, [dispatch, successDelete]);
-  const deleteHandler = (user) => {
-    if (window.confirm('Are you sure?')) {
-      dispatch(deleteUser(user._id));
+
+  const navigate = useNavigate();
+
+  const userSignin = useSelector((state) => state.userSignin);
+  const { userInfo } = userSignin;
+  useEffect(() => {
+    const fetchData = async () => {
+      dispatch({ type: 'FETCH_REQUEST' });
+      try {
+        const { data } = await Axios.get(`/api/users`, {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
+        dispatch({ type: 'FETCH_SUCCESS', payload: data });
+      } catch (error) {
+        dispatch({
+          type: 'FETCH_FAIL',
+          payload: getError(error),
+        });
+      }
+    };
+    fetchData();
+  }, [userInfo, successDelete]);
+
+  const deleteHandler = async (user) => {
+    if (window.confirm('Are you sure to delete?')) {
+      dispatch({ type: 'DELETE_REQUEST' });
+      try {
+        await Axios.delete(`/api/users/${user._id}`, {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
+        toast.success('user deleted successfully');
+        dispatch({ type: 'DELETE_SUCCESS' });
+      } catch (error) {
+        toast.error(getError(error));
+        dispatch({
+          type: 'DELETE_FAIL',
+        });
+      }
     }
   };
+
   return (
     <div>
       <h1>Users</h1>
       {loadingDelete && <LoadingBox></LoadingBox>}
-      {errorDelete && <MessageBox variant="danger">{errorDelete}</MessageBox>}
-      {successDelete && (
-        <MessageBox variant="success">User Deleted Successfully</MessageBox>
-      )}
       {loading ? (
         <LoadingBox></LoadingBox>
       ) : error ? (

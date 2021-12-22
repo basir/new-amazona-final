@@ -28,7 +28,7 @@ const reducer = (state, action) => {
   }
 };
 
-export default function SearchScreen(props) {
+export default function SearchScreen() {
   const navigate = useNavigate();
 
   const { search } = useLocation();
@@ -39,6 +39,7 @@ export default function SearchScreen(props) {
   const rating = sp.get('rating') || 'all';
   const order = sp.get('order') || 'newest';
   const page = sp.get('page') || 1;
+
   const [{ loading, error, products, pages }, dispatch] = useReducer(reducer, {
     loading: true,
     error: '',
@@ -79,7 +80,6 @@ export default function SearchScreen(props) {
     error: errorCategories,
     categories,
   } = productCategoryList;
-  console.log(page);
   return (
     <div>
       <div className="row">

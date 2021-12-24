@@ -1,20 +1,20 @@
 import React from 'react';
-import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import store from './store';
+
+import { StoreProvider } from './store';
 
 ReactDOM.render(
-  <Provider store={store}>
+  <StoreProvider>
     <React.StrictMode>
       <PayPalScriptProvider deferLoading={true}>
         <App />
       </PayPalScriptProvider>
     </React.StrictMode>
-  </Provider>,
+  </StoreProvider>,
   document.getElementById('root')
 );
 

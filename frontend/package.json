@@ -43,5 +43,8 @@
     "redux": "^4.1.2",
     "redux-thunk": "^2.4.1",
     "socket.io-client": "^4.4.0"
+  },
+  "devDependencies": {
+    "use-reducer-logger": "^1.0.2"
   }
 }

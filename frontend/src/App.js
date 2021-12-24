@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useContext, useEffect, useState } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
-import { signout } from './actions/userActions';
 import AdminRoute from './components/AdminRoute';
 import PrivateRoute from './components/PrivateRoute';
 import CartScreen from './screens/CartScreen';
@@ -24,35 +22,46 @@ import SellerRoute from './components/SellerRoute';
 import SellerScreen from './screens/SellerScreen';
 import SearchBox from './components/SearchBox';
 import SearchScreen from './screens/SearchScreen';
-import { listProductCategories } from './actions/productActions';
 import LoadingBox from './components/LoadingBox';
 import MessageBox from './components/MessageBox';
 import MapScreen from './screens/MapScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import SupportScreen from './screens/SupportScreen';
 import ChatBox from './components/ChatBox';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Store } from './store';
+import { getError } from './utils';
+import Axios from 'axios';
 
 function App() {
-  const cart = useSelector((state) => state.cart);
+  const { state, dispatch } = useContext(Store);
+  const { cart, userInfo } = state;
+
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
   const { cartItems } = cart;
-  const userSignin = useSelector((state) => state.userSignin);
-  const { userInfo } = userSignin;
-  const dispatch = useDispatch();
   const signoutHandler = () => {
-    dispatch(signout());
+    dispatch({ type: 'USER_SIGNOUT' });
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('cartItems');
+    localStorage.removeItem('shippinhAddress');
+    localStorage.removeItem('paymentMethod');
+    window.location.href = '/signin';
   };
 
-  const productCategoryList = useSelector((state) => state.productCategoryList);
-  const {
-    loading: loadingCategories,
-    error: errorCategories,
-    categories,
-  } = productCategoryList;
+  const [categories, setCategories] = useState([]);
+
+  const fetchCategories = async () => {
+    try {
+      const { data } = await Axios.get(`/api/products/categories`);
+      setCategories(data);
+    } catch (err) {
+      toast.error(getError(err));
+    }
+  };
+
   useEffect(() => {
-    dispatch(listProductCategories());
+    fetchCategories();
   }, [dispatch]);
   return (
     <BrowserRouter>
@@ -250,22 +259,16 @@ function App() {
             <li>
               <strong>Categories</strong>
             </li>
-            {loadingCategories ? (
-              <LoadingBox></LoadingBox>
-            ) : errorCategories ? (
-              <MessageBox variant="danger">{errorCategories}</MessageBox>
-            ) : (
-              categories.map((c) => (
-                <li key={c} className="nav-link">
-                  <Link
-                    to={`/search?category=${c}`}
-                    onClick={() => setSidebarIsOpen(false)}
-                  >
-                    {c}
-                  </Link>
-                </li>
-              ))
-            )}
+            {categories.map((category) => (
+              <li key={category} className="nav-link">
+                <Link
+                  to={`/search?category=${category}`}
+                  onClick={() => setSidebarIsOpen(false)}
+                >
+                  {category}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -380,7 +383,7 @@ function App() {
         </main>
         <footer>
           {userInfo && !userInfo.isAdmin && <ChatBox userInfo={userInfo} />}
-          <div className="text-center">All right reserved</div>
+          <div className="text-center">All Rights Reserved</div>
         </footer>
       </div>
     </BrowserRouter>

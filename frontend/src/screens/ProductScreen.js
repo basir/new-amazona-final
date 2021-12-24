@@ -1,5 +1,11 @@
 import Axios from 'axios';
-import React, { useEffect, useReducer, useRef, useState } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -7,6 +13,7 @@ import { addToCart } from '../actions/cartActions';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import Rating from '../components/Rating';
+import { Store } from '../store';
 import { getError } from '../utils';
 
 const reducer = (state, action) => {
@@ -34,6 +41,8 @@ const reducer = (state, action) => {
 export default function ProductScreen(props) {
   let reviewsRef = useRef();
 
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { cart, userInfo } = state;
   const [{ loading, error, product, loadingCreateReview }, dispatch] =
     useReducer(reducer, {
       loading: true,
@@ -44,12 +53,6 @@ export default function ProductScreen(props) {
 
   const params = useParams();
   const { id: productId } = params;
-
-  const rdxDispatch = useDispatch();
-  const { error: errorAddToCart, success: successAddToCart } = useSelector(
-    (state) => state.cart
-  );
-  const { userInfo } = useSelector((state) => state.userSignin);
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -71,25 +74,17 @@ export default function ProductScreen(props) {
     fetchProduct();
   }, [dispatch, productId]);
 
-  useEffect(() => {
-    if (errorAddToCart) {
-      toast.error(errorAddToCart);
-      rdxDispatch({
-        type: 'CART_ADD_RESET',
-      });
-    } else if (successAddToCart) {
-      toast.success('Successfully added to cart');
-      rdxDispatch({
-        type: 'CART_ADD_RESET',
-      });
-      navigate('/cart');
-    }
-  }, [errorAddToCart, successAddToCart, rdxDispatch, navigate]);
-
   const addToCartHandler = async () => {
-    rdxDispatch(addToCart(productId, 1));
+    const existItem = cart.cartItems.find((x) => x._id === product._id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+    const { data } = await Axios.get(`/api/products/${product._id}`);
+    if (data.countInStock < quantity) {
+      window.alert('Sorry. Product is out of stock');
+      return;
+    }
+    ctxDispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
+    navigate('/cart');
   };
-
   const submitHandler = async (e) => {
     e.preventDefault();
     if (!comment || !rating) {

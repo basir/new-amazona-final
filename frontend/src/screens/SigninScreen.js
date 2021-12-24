@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import Axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { signin } from '../actions/userActions';
-import LoadingBox from '../components/LoadingBox';
+import { Store } from '../store';
+import { getError } from '../utils';
 
-export default function SigninScreen(props) {
+export default function SigninScreen() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,29 +13,28 @@ export default function SigninScreen(props) {
   const { search } = useLocation();
   const redirectInUrl = new URLSearchParams(search).get('redirect');
   const redirect = redirectInUrl ? redirectInUrl : '/';
+  const { state, dispatch } = useContext(Store);
+  const { userInfo } = state;
 
-  const userSignin = useSelector((state) => state.userSignin);
-  const { userInfo, loading, error } = userSignin;
-
-  const dispatch = useDispatch();
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    dispatch(signin(email, password));
+    try {
+      const { data } = await Axios.post('/api/users/signin', {
+        email,
+        password,
+      });
+      dispatch({ type: 'USER_SIGNIN', payload: data });
+      localStorage.setItem('userInfo', JSON.stringify(data));
+      navigate(redirect || '/');
+    } catch (err) {
+      toast.error(getError(err));
+    }
   };
   useEffect(() => {
     if (userInfo) {
       navigate(redirect);
     }
   }, [navigate, redirect, userInfo]);
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-      dispatch({
-        type: 'SIGNIN_RESET',
-      });
-    }
-  }, [dispatch, error]);
 
   return (
     <div className="container small-container">
@@ -74,7 +73,6 @@ export default function SigninScreen(props) {
             Sign In
           </button>
         </div>
-        {loading && <LoadingBox></LoadingBox>}
         <div className="mb-3">
           <label />
           <div>

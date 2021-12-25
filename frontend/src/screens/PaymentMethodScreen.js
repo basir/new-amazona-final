@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { savePaymentMethod } from '../actions/cartActions';
 import CheckoutSteps from '../components/CheckoutSteps';
+import { Store } from '../store';
 
 export default function PaymentMethodScreen(props) {
   const navigate = useNavigate();
-  const cart = useSelector((state) => state.cart);
-  const { shippingAddress, paymentMethod } = cart;
+
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const {
+    cart: { shippingAddress, paymentMethod },
+  } = state;
   if (!shippingAddress.address) {
     navigate('/shipping');
   }
@@ -16,10 +18,10 @@ export default function PaymentMethodScreen(props) {
     paymentMethod || 'PayPal'
   );
 
-  const dispatch = useDispatch();
   const submitHandler = (e) => {
     e.preventDefault();
-    dispatch(savePaymentMethod(paymentMethodName));
+    ctxDispatch({ type: 'SAVE_PAYMENT_METHOD', payload: paymentMethodName });
+    localStorage.setItem('paymentMethod', paymentMethodName);
     navigate('/placeorder');
   };
   return (

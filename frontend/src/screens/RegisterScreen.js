@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import Axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { register } from '../actions/userActions';
-import LoadingBox from '../components/LoadingBox';
+import { Store } from '../store';
+import { getError } from '../utils';
 
 export default function RegisterScreen(props) {
   const navigate = useNavigate();
@@ -16,18 +16,29 @@ export default function RegisterScreen(props) {
   const redirectInUrl = new URLSearchParams(search).get('redirect');
   const redirect = redirectInUrl ? redirectInUrl : '/';
 
-  const userRegister = useSelector((state) => state.userRegister);
-  const { userInfo, loading, error } = userRegister;
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { userInfo } = state;
 
-  const dispatch = useDispatch();
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
-    } else {
-      dispatch(register(name, email, password));
+    try {
+      if (password !== confirmPassword) {
+        toast.error('Passwords do not match');
+      } else {
+        const { data } = await Axios.post('/api/users/register', {
+          name,
+          email,
+          password,
+        });
+        ctxDispatch({ type: 'USER_SIGNIN', payload: data });
+        localStorage.setItem('userInfo', JSON.stringify(data));
+        navigate(redirect || '/');
+      }
+    } catch (err) {
+      toast.error(getError(err));
     }
   };
+
   useEffect(() => {
     if (userInfo) {
       navigate(redirect);
@@ -35,13 +46,11 @@ export default function RegisterScreen(props) {
   }, [navigate, redirect, userInfo]);
 
   useEffect(() => {
-    if (error) {
-      toast.error(error);
-      dispatch({
-        type: 'REGISTER_RESET',
-      });
+    if (userInfo) {
+      navigate(redirect);
     }
-  }, [dispatch, error]);
+  }, [navigate, redirect, userInfo]);
+
   return (
     <div className="container small-container">
       <h1 className="my-3">Register</h1>
@@ -88,7 +97,7 @@ export default function RegisterScreen(props) {
 
         <div className="mb-3">
           <label htmlFor="confirmPassword" className="form-label">
-            Password
+            Confirm Password
           </label>
           <input
             type="password"
@@ -101,11 +110,10 @@ export default function RegisterScreen(props) {
         </div>
         <div className="mb-3">
           <label />
-          <button className="btn btn-primary" type="submit" disabled={loading}>
+          <button className="btn btn-primary" type="submit">
             Register
           </button>
         </div>
-        {loading && <LoadingBox></LoadingBox>}
         <div className="mb-3">
           <label />
           <div>

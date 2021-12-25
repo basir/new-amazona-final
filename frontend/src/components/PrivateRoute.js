@@ -1,10 +1,10 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
+import { Store } from '../store';
 
 const PrivateRoute = ({ children }) => {
-  const userSignin = useSelector((state) => state.userSignin);
-  const { userInfo } = userSignin;
+  const { state } = useContext(Store);
+  const { userInfo } = state;
   return userInfo ? children : <Navigate to="/signin" />;
 };
 

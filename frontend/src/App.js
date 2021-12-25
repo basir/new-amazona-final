@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import Button from 'react-bootstrap/Button';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+import Container from 'react-bootstrap/Container';
 import AdminRoute from './components/AdminRoute';
 import PrivateRoute from './components/PrivateRoute';
 import CartScreen from './screens/CartScreen';
@@ -22,8 +28,6 @@ import SellerRoute from './components/SellerRoute';
 import SellerScreen from './screens/SellerScreen';
 import SearchBox from './components/SearchBox';
 import SearchScreen from './screens/SearchScreen';
-import LoadingBox from './components/LoadingBox';
-import MessageBox from './components/MessageBox';
 import MapScreen from './screens/MapScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import SupportScreen from './screens/SupportScreen';
@@ -35,13 +39,13 @@ import { getError } from './utils';
 import Axios from 'axios';
 
 function App() {
-  const { state, dispatch } = useContext(Store);
+  const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart, userInfo } = state;
 
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
   const { cartItems } = cart;
   const signoutHandler = () => {
-    dispatch({ type: 'USER_SIGNOUT' });
+    ctxDispatch({ type: 'USER_SIGNOUT' });
     localStorage.removeItem('userInfo');
     localStorage.removeItem('cartItems');
     localStorage.removeItem('shippinhAddress');
@@ -51,18 +55,17 @@ function App() {
 
   const [categories, setCategories] = useState([]);
 
-  const fetchCategories = async () => {
-    try {
-      const { data } = await Axios.get(`/api/products/categories`);
-      setCategories(data);
-    } catch (err) {
-      toast.error(getError(err));
-    }
-  };
-
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await Axios.get(`/api/products/categories`);
+        setCategories(data);
+      } catch (err) {
+        toast.error(getError(err));
+      }
+    };
     fetchCategories();
-  }, [dispatch]);
+  }, [ctxDispatch]);
   return (
     <BrowserRouter>
       <div
@@ -74,202 +77,107 @@ function App() {
       >
         <ToastContainer position="bottom-center" limit={1} />
         <header>
-          <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div className="container-fluid">
-              <button
-                className="btn btn-dark"
+          <Navbar bg="dark" variant="dark" expand="lg">
+            <Container>
+              <Button
+                variant="dark"
                 onClick={() => setSidebarIsOpen(!sidebarIsOpen)}
               >
                 <i className="fas fa-bars"></i>
-              </button>
-              <Link className="navbar-brand" to="/">
-                amazona
-              </Link>
-              <button
-                className="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-              >
-                <i className="fas fa-ellipsis-v"></i>
-              </button>
-              <div
-                className="collapse navbar-collapse"
-                id="navbarSupportedContent"
-              >
+              </Button>
+              <LinkContainer to="/">
+                <Navbar.Brand>amazona</Navbar.Brand>
+              </LinkContainer>
+              <Navbar.Toggle aria-controls="basic-navbar-nav" />
+              <Navbar.Collapse id="basic-navbar-nav">
                 <SearchBox />
-
-                <ul className="navbar-nav">
-                  <li className="nav-item">
-                    <Link to="/cart" className="nav-link">
-                      Cart
-                      {cartItems.length > 0 && (
-                        <span className="badge rounded-pill bg-danger">
-                          {cartItems.length}
-                        </span>
-                      )}
-                    </Link>
-                  </li>
+                <Nav className="me-auto">
+                  <Link to="/cart" className="nav-link">
+                    Cart
+                    {cartItems.length > 0 && (
+                      <span className="badge rounded-pill bg-danger">
+                        {cartItems.length}
+                      </span>
+                    )}
+                  </Link>
                   {userInfo ? (
-                    <li className="nav-item dropdown">
-                      <Link
-                        to="#"
-                        className="nav-link dropdown-toggle"
-                        href="#"
-                        id="navbarDropdown"
-                        role="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        {userInfo.name}
-                      </Link>
-                      <ul
-                        className="dropdown-menu"
-                        aria-labelledby="navbarDropdown"
-                      >
-                        <li>
-                          <Link className="dropdown-item" to="/profile">
-                            User Profile
-                          </Link>
-                        </li>
+                    <NavDropdown title={userInfo.name} id="basic-nav-dropdown">
+                      <LinkContainer to="/profile">
+                        <NavDropdown.Item>User Profile</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to="/orderhistory">
+                        <NavDropdown.Item>Order History</NavDropdown.Item>
+                      </LinkContainer>
 
-                        <li>
-                          <Link className="dropdown-item" to="/orderhistory">
-                            Order History
-                          </Link>
-                        </li>
-                        <li>
-                          <hr className="dropdown-divider" />
-                        </li>
-                        <li>
-                          <Link
-                            className="dropdown-item"
-                            to="#signout"
-                            onClick={signoutHandler}
-                          >
-                            Sign Out
-                          </Link>
-                        </li>
-                      </ul>
-                    </li>
+                      <NavDropdown.Divider />
+                      <Link
+                        className="dropdown-item"
+                        to="#signout"
+                        onClick={signoutHandler}
+                      >
+                        Sign Out
+                      </Link>
+                    </NavDropdown>
                   ) : (
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/signin">
-                        Sign In
-                      </Link>
-                    </li>
+                    <Link className="nav-link" to="/signin">
+                      Sign In
+                    </Link>
                   )}
-
                   {userInfo && userInfo.isSeller && (
-                    <li className="nav-item dropdown">
-                      <Link
-                        to="#"
-                        className="nav-link dropdown-toggle"
-                        href="#"
-                        id="navbarDropdown"
-                        role="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        Seller
+                    <NavDropdown title="Seller" id="basic-nav-dropdown">
+                      <Link className="dropdown-item" to="/productlist/seller">
+                        Products
                       </Link>
-                      <ul
-                        className="dropdown-menu"
-                        aria-labelledby="navbarDropdown"
-                      >
-                        <li>
-                          <Link
-                            className="dropdown-item"
-                            to="/productlist/seller"
-                          >
-                            Products
-                          </Link>
-                        </li>
 
-                        <li>
-                          <Link
-                            className="dropdown-item"
-                            to="/orderlist/seller"
-                          >
-                            Orders
-                          </Link>
-                        </li>
-                      </ul>
-                    </li>
+                      <Link className="dropdown-item" to="/orderlist/seller">
+                        Orders
+                      </Link>
+                    </NavDropdown>
                   )}
-
                   {userInfo && userInfo.isAdmin && (
-                    <li className="nav-item dropdown">
-                      <Link
-                        to="#"
-                        className="nav-link dropdown-toggle"
-                        href="#"
-                        id="navbarDropdown"
-                        role="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        Admin
+                    <NavDropdown title="Admin" id="basic-nav-dropdown">
+                      <Link className="dropdown-item" to="/dashboard">
+                        Dashboard
                       </Link>
-                      <ul
-                        className="dropdown-menu"
-                        aria-labelledby="navbarDropdown"
-                      >
-                        <li>
-                          <Link className="dropdown-item" to="/dashboard">
-                            Dashboard
-                          </Link>
-                        </li>
-                        <li>
-                          <Link className="dropdown-item" to="/productlist">
-                            Products
-                          </Link>
-                        </li>
-                        <li>
-                          <Link className="dropdown-item" to="/orderlist">
-                            Orders
-                          </Link>
-                        </li>
-
-                        <li>
-                          <Link className="dropdown-item" to="/userlist">
-                            Users
-                          </Link>
-                        </li>
-                      </ul>
-                    </li>
+                      <Link className="dropdown-item" to="/productlist">
+                        Products
+                      </Link>
+                      <Link className="dropdown-item" to="/orderlist">
+                        Orders
+                      </Link>
+                      <Link className="dropdown-item" to="/userlist">
+                        Users
+                      </Link>
+                    </NavDropdown>
                   )}
-                </ul>
-              </div>
-            </div>
-          </nav>
+                </Nav>
+              </Navbar.Collapse>
+            </Container>
+          </Navbar>
         </header>
 
         <div
           className={
             sidebarIsOpen
-              ? ' active-nav side-navbar  d-flex justify-content-between flex-wrap flex-column'
+              ? ' active-nav side-navbar d-flex justify-content-between flex-wrap flex-column'
               : 'side-navbar d-flex justify-content-between flex-wrap flex-column'
           }
         >
-          <ul className="nav flex-column text-white w-100 p-2">
-            <li>
+          <Nav className="flex-column text-white w-100 p-2">
+            <Nav.Item>
               <strong>Categories</strong>
-            </li>
+            </Nav.Item>
             {categories.map((category) => (
-              <li key={category} className="nav-link">
-                <Link
+              <Nav.Item key={category}>
+                <LinkContainer
                   to={`/search?category=${category}`}
                   onClick={() => setSidebarIsOpen(false)}
                 >
-                  {category}
-                </Link>
-              </li>
+                  <Nav.Link>{category}</Nav.Link>
+                </LinkContainer>
+              </Nav.Item>
             ))}
-          </ul>
+          </Nav>
         </div>
 
         <main className="container mt-3">

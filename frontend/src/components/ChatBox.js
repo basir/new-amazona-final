@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import socketIOClient from 'socket.io-client';
+import Row from 'react-bootstrap/Row';
 
 const ENDPOINT =
   window.location.host.indexOf('localhost') >= 0
@@ -70,12 +71,12 @@ export default function ChatBox(props) {
         </button>
       ) : (
         <div className="card card-body">
-          <div className="row">
+          <Row>
             <strong>Support </strong>
             <button type="button" onClick={closeHandler}>
               <i className="fa fa-close" />
             </button>
-          </div>
+          </Row>
           <ul ref={uiMessagesRef}>
             {messages.map((msg, index) => (
               <li key={index}>

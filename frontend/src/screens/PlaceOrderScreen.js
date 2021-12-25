@@ -1,43 +1,93 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { createOrder } from "../actions/orderActions";
-import CheckoutSteps from "../components/CheckoutSteps";
-import { ORDER_CREATE_RESET } from "../constants/orderConstants";
-import LoadingBox from "../components/LoadingBox";
-import MessageBox from "../components/MessageBox";
+import Axios from 'axios';
+import React, { useContext, useReducer } from 'react';
+import Row from 'react-bootstrap/Row';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import CheckoutSteps from '../components/CheckoutSteps';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
+import { Store } from '../store';
+import { getError } from '../utils';
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'REFRESH_PRODUCT':
+      return { ...state, product: action.payload };
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true };
+    case 'FETCH_SUCCESS':
+      return { ...state, product: action.payload, loading: false };
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
+    case 'CREATE_REQUEST':
+      return { ...state, loadingCreateReview: true };
+    case 'CREATE_SUCCESS':
+      return { ...state, loadingCreateReview: false };
+    case 'CREATE_FAIL':
+      return { ...state, loadingCreateReview: false };
+    default:
+      return state;
+  }
+};
 
 export default function PlaceOrderScreen(props) {
   const navigate = useNavigate();
-  const cart = useSelector((state) => state.cart);
+
+  const [{ loading, error }, dispatch] = useReducer(reducer, {
+    loading: false,
+    error: '',
+  });
+
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { cart, userInfo } = state;
+
   if (!cart.paymentMethod) {
-    navigate("/payment");
+    navigate('/payment');
   }
-  const orderCreate = useSelector((state) => state.orderCreate);
-  const { loading, success, error, order } = orderCreate;
-  const toPrice = (num) => Number(num.toFixed(2)); // 5.123 => "5.12" => 5.12
-  cart.itemsPrice = toPrice(
-    cart.cartItems.reduce((a, c) => a + c.qty * c.price, 0)
+  const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100;
+  cart.itemsPrice = round2(
+    cart.cartItems.reduce((a, c) => a + c.quantity * c.price, 0)
   );
-  cart.shippingPrice = cart.itemsPrice > 100 ? toPrice(0) : toPrice(10);
-  cart.taxPrice = toPrice(0.15 * cart.itemsPrice);
+  cart.shippingPrice = cart.itemsPrice > 100 ? round2(0) : round2(10);
+  cart.taxPrice = round2(0.15 * cart.itemsPrice);
   cart.totalPrice = cart.itemsPrice + cart.shippingPrice + cart.taxPrice;
-  const dispatch = useDispatch();
-  const placeOrderHandler = () => {
-    dispatch(createOrder({ ...cart, orderItems: cart.cartItems }));
-  };
-  useEffect(() => {
-    if (success) {
-      navigate(`/order/${order._id}`);
-      dispatch({ type: ORDER_CREATE_RESET });
+
+  const placeOrderHandler = async () => {
+    try {
+      dispatch({ type: 'CREATE_REQUEST' });
+      const { data } = await Axios.post(
+        '/api/orders',
+        {
+          orderItems: cart.cartItems,
+          shippingAddress: cart.shippingAddress,
+          paymentMethod: cart.paymentMethod,
+          itemsPrice: cart.itemsPrice,
+          shippingPrice: cart.shippingPrice,
+          taxPrice: cart.taxPrice,
+          totalPrice: cart.totalPrice,
+        },
+        {
+          headers: {
+            authorization: `Bearer ${userInfo.token}`,
+          },
+        }
+      );
+      ctxDispatch({ type: 'CART_CLEAR' });
+      dispatch({ type: 'CREATE_SUCCESS' });
+      localStorage.removeItem('cartItems');
+      navigate(`/order/${data.order._id}`);
+    } catch (err) {
+      dispatch({ type: 'CREATE_FAIL' });
+      toast.error(getError(err));
     }
-  }, [dispatch, order, navigate, success]);
+  };
+
   return (
     <div>
       <CheckoutSteps step1 step2 step3 step4></CheckoutSteps>
 
       <h1 className="my-3">Preview Order</h1>
-      <div className="row">
+      <Row>
         <div className="col-md-8">
           <div className="mb-3 card card-body">
             <h2>Shipping</h2>
@@ -62,18 +112,18 @@ export default function PlaceOrderScreen(props) {
             <h2>Items</h2>
             <ul className="list-group list-group-flush">
               {cart.cartItems.map((item) => (
-                <li className="list-group-item" key={item.product}>
+                <li className="list-group-item" key={item._id}>
                   <div className="row align-items-center">
                     <div className="col-md-6">
                       <img
                         src={item.image}
                         alt={item.name}
                         className="img-fluid rounded img-thumbnail"
-                      ></img>{" "}
+                      ></img>{' '}
                       <Link to={`/product/${item.product}`}>{item.name}</Link>
                     </div>
                     <div className="col-md-3">
-                      <span>{item.qty}</span>
+                      <span>{item.quantity}</span>
                     </div>
                     <div className="col-md-3">${item.price}</div>
                   </div>
@@ -88,32 +138,32 @@ export default function PlaceOrderScreen(props) {
             <h2>Order Summary</h2>
             <ul className="list-group list-group-flush">
               <li className="list-group-item">
-                <div className="row">
+                <Row>
                   <div className="col">Items</div>
                   <div className="col">${cart.itemsPrice.toFixed(2)}</div>
-                </div>
+                </Row>
               </li>
               <li className="list-group-item">
-                <div className="row">
+                <Row>
                   <div className="col">Shipping</div>
                   <div className="col">${cart.shippingPrice.toFixed(2)}</div>
-                </div>
+                </Row>
               </li>
               <li className="list-group-item">
-                <div className="row">
+                <Row>
                   <div className="col">Tax</div>
                   <div className="col">${cart.taxPrice.toFixed(2)}</div>
-                </div>
+                </Row>
               </li>
               <li className="list-group-item">
-                <div className="row">
+                <Row>
                   <div className="col">
                     <strong> Order Total</strong>
                   </div>
                   <div className="col">
                     <strong>${cart.totalPrice.toFixed(2)}</strong>
                   </div>
-                </div>
+                </Row>
               </li>
 
               <li className="list-group-item">
@@ -134,7 +184,7 @@ export default function PlaceOrderScreen(props) {
             </ul>
           </div>
         </div>
-      </div>
+      </Row>
     </div>
   );
 }

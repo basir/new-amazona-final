@@ -1,10 +1,11 @@
-import React, { useEffect, useReducer } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useContext, useEffect, useReducer } from 'react';
 import Chart from 'react-google-charts';
+import Row from 'react-bootstrap/Row';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import Axios from 'axios';
 import { getError } from '../utils';
+import { Store } from '../store';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -29,8 +30,9 @@ export default function DashboardScreen() {
     error: '',
   });
 
-  const userSignin = useSelector((state) => state.userSignin);
-  const { userInfo } = userSignin;
+  const { state } = useContext(Store);
+  const { userInfo } = state;
+
   useEffect(() => {
     const fetchData = async () => {
       dispatch({ type: 'FETCH_REQUEST' });
@@ -51,16 +53,15 @@ export default function DashboardScreen() {
 
   return (
     <div>
-      <div className="row">
-        <h1>Dashboard</h1>
-      </div>
+      <h1>Dashboard</h1>
+
       {loading ? (
         <LoadingBox />
       ) : error ? (
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
         <>
-          <div className="row">
+          <Row>
             <div className="col-md-4">
               <div className="card">
                 <div className="card-body">
@@ -102,7 +103,7 @@ export default function DashboardScreen() {
                 </div>
               </div>
             </div>
-          </div>
+          </Row>
           <div className="my-3">
             <h2>Sales</h2>
             {summary.dailyOrders.length === 0 ? (

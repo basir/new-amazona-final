@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   LoadScript,
   GoogleMap,
@@ -8,13 +8,16 @@ import {
 import LoadingBox from '../components/LoadingBox';
 import Axios from 'axios';
 import { USER_ADDRESS_MAP_CONFIRM } from '../constants/userConstants';
-import { useDispatch } from 'react-redux';
+
 import { useNavigate } from 'react-router-dom';
+import { Store } from '../store';
 
 const libs = ['places'];
 const defaultLocation = { lat: 45.516, lng: -73.56 };
 
-export default function MapScreen(props) {
+export default function MapScreen() {
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { userInfo } = state;
   const navigate = useNavigate();
   const [googleApiKey, setGoogleApiKey] = useState('');
   const [center, setCenter] = useState(defaultLocation);
@@ -54,12 +57,12 @@ export default function MapScreen(props) {
     setCenter({ lat: place.lat(), lng: place.lng() });
     setLocation({ lat: place.lat(), lng: place.lng() });
   };
-  const dispatch = useDispatch();
+
   const onConfirm = () => {
     const places = placeRef.current.getPlaces();
     if (places && places.length === 1) {
       // dispatch select action
-      dispatch({
+      ctxDispatch({
         type: USER_ADDRESS_MAP_CONFIRM,
         payload: {
           lat: location.lat,

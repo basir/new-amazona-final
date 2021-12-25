@@ -1,10 +1,10 @@
 import Axios from 'axios';
-import React, { useState, useEffect, useReducer } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useReducer, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
+import { Store } from '../store';
 import { getError } from '../utils';
 
 const reducer = (state, action) => {
@@ -28,8 +28,8 @@ const reducer = (state, action) => {
 };
 
 export default function UserEditScreen(props) {
-  const userSignin = useSelector((state) => state.userSignin);
-  const { userInfo } = userSignin;
+  const { state } = useContext(Store);
+  const { userInfo } = state;
   const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
     loading: true,
     error: '',

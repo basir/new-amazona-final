@@ -3,11 +3,11 @@ import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import MessageBox from '../components/MessageBox';
 import { Store } from '../store';
-
+import Row from 'react-bootstrap/Row';
 export default function CartScreen(props) {
   const navigate = useNavigate();
 
-  const { state, dispatch } = useContext(Store);
+  const { state, dispatch: ctxDispatch } = useContext(Store);
   const {
     cart: { cartItems },
   } = state;
@@ -17,10 +17,10 @@ export default function CartScreen(props) {
       window.alert('Sorry. Product is out of stock');
       return;
     }
-    dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } });
+    ctxDispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } });
   };
   const removeItemHandler = (item) => {
-    dispatch({ type: 'CART_REMOVE_ITEM', payload: item });
+    ctxDispatch({ type: 'CART_REMOVE_ITEM', payload: item });
   };
 
   const checkoutHandler = () => {
@@ -29,7 +29,7 @@ export default function CartScreen(props) {
   return (
     <div>
       <h1>Shopping Cart</h1>
-      <div className="row">
+      <Row>
         <div className="col-md-8">
           {cartItems.length === 0 ? (
             <MessageBox>
@@ -110,7 +110,7 @@ export default function CartScreen(props) {
             </ul>
           </div>
         </div>
-      </div>
+      </Row>
     </div>
   );
 }

@@ -1,7 +1,8 @@
 import Axios from 'axios';
-import React, { useEffect, useReducer } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useReducer, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import Row from 'react-bootstrap/Row';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import Product from '../components/Product';
@@ -52,6 +53,7 @@ export default function SearchScreen() {
         const { data } = await Axios.get(
           `/api/products?page=${page}&query=${query}&category=${category}&price=${price}&rating=${rating}&order=${order}`
         );
+
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (error) {
         dispatch({
@@ -64,6 +66,18 @@ export default function SearchScreen() {
     fetchData();
   }, [category, dispatch, price, query, order, rating, page]);
 
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data } = await Axios.get(`/api/products/categories`);
+        setCategories(data);
+      } catch (err) {
+        toast.error(getError(err));
+      }
+    };
+    fetchCategories();
+  }, [dispatch]);
   const getFilterUrl = (filter) => {
     const filterPage = filter.page || page;
     const filterCategory = filter.category || category;
@@ -74,44 +88,32 @@ export default function SearchScreen() {
     return `/search?category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&rating=${filterRating}&order=${sortOrder}&page=${filterPage}`;
   };
 
-  const productCategoryList = useSelector((state) => state.productCategoryList);
-  const {
-    loading: loadingCategories,
-    error: errorCategories,
-    categories,
-  } = productCategoryList;
   return (
     <div>
-      <div className="row">
+      <Row>
         <div className="col-md-3">
           <h3>Department</h3>
           <div>
-            {loadingCategories ? (
-              <LoadingBox></LoadingBox>
-            ) : errorCategories ? (
-              <MessageBox variant="danger">{errorCategories}</MessageBox>
-            ) : (
-              <ul>
-                <li>
+            <ul>
+              <li>
+                <Link
+                  className={'all' === category ? 'text-bold' : ''}
+                  to={getFilterUrl({ category: 'all' })}
+                >
+                  Any
+                </Link>
+              </li>
+              {categories.map((c) => (
+                <li key={c}>
                   <Link
-                    className={'all' === category ? 'text-bold' : ''}
-                    to={getFilterUrl({ category: 'all' })}
+                    className={c === category ? 'text-bold' : ''}
+                    to={getFilterUrl({ category: c })}
                   >
-                    Any
+                    {c}
                   </Link>
                 </li>
-                {categories.map((c) => (
-                  <li key={c}>
-                    <Link
-                      className={c === category ? 'text-bold' : ''}
-                      to={getFilterUrl({ category: c })}
-                    >
-                      {c}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
+              ))}
+            </ul>
           </div>
           <div>
             <h3>Price</h3>
@@ -215,7 +217,7 @@ export default function SearchScreen() {
                 <MessageBox>No Product Found</MessageBox>
               )}
 
-              <div className="row">
+              <Row>
                 {products.map((product) => (
                   <div
                     key={product._id}
@@ -224,7 +226,7 @@ export default function SearchScreen() {
                     <Product product={product}></Product>
                   </div>
                 ))}
-              </div>
+              </Row>
 
               <div>
                 {[...Array(pages).keys()].map((x) => (
@@ -240,7 +242,7 @@ export default function SearchScreen() {
             </>
           )}
         </div>
-      </div>
+      </Row>
     </div>
   );
 }

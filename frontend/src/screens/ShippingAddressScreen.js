@@ -1,32 +1,33 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { saveShippingAddress } from "../actions/cartActions";
-import CheckoutSteps from "../components/CheckoutSteps";
+import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { saveShippingAddress } from '../actions/cartActions';
+import CheckoutSteps from '../components/CheckoutSteps';
+import { Store } from '../store';
 
 export default function ShippingAddressScreen() {
   const navigate = useNavigate();
-  const userSignin = useSelector((state) => state.userSignin);
 
-  const { userInfo } = userSignin;
-  const cart = useSelector((state) => state.cart);
-  const { shippingAddress } = cart;
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const {
+    addressMap,
+    userInfo,
+    cart: { shippingAddress },
+  } = state;
+
   const [lat, setLat] = useState(shippingAddress.lat);
   const [lng, setLng] = useState(shippingAddress.lng);
-  const userAddressMap = useSelector((state) => state.userAddressMap);
-  const { address: addressMap } = userAddressMap;
 
   if (!userInfo) {
-    navigate("/signin");
+    navigate('/signin');
   }
-  const [fullName, setFullName] = useState(shippingAddress.fullName || "");
-  const [address, setAddress] = useState(shippingAddress.address || "");
-  const [city, setCity] = useState(shippingAddress.city || "");
+  const [fullName, setFullName] = useState(shippingAddress.fullName || '');
+  const [address, setAddress] = useState(shippingAddress.address || '');
+  const [city, setCity] = useState(shippingAddress.city || '');
   const [postalCode, setPostalCode] = useState(
-    shippingAddress.postalCode || ""
+    shippingAddress.postalCode || ''
   );
-  const [country, setCountry] = useState(shippingAddress.country || "");
-  const dispatch = useDispatch();
+  const [country, setCountry] = useState(shippingAddress.country || '');
+
   const submitHandler = (e) => {
     e.preventDefault();
     const newLat = addressMap ? addressMap.lat : lat;
@@ -42,8 +43,21 @@ export default function ShippingAddressScreen() {
     //   );
     // }
     if (moveOn) {
-      dispatch(
-        saveShippingAddress({
+      ctxDispatch({
+        type: 'SAVE_SHIPPING_ADDRESS',
+        payload: {
+          fullName,
+          address,
+          city,
+          postalCode,
+          country,
+          lat: newLat,
+          lng: newLng,
+        },
+      });
+      localStorage.setItem(
+        'shippingAddress',
+        JSON.stringify({
           fullName,
           address,
           city,
@@ -53,11 +67,11 @@ export default function ShippingAddressScreen() {
           lng: newLng,
         })
       );
-      navigate("/payment");
+      navigate('/payment');
     }
   };
   const chooseOnMap = () => {
-    dispatch(
+    ctxDispatch(
       saveShippingAddress({
         fullName,
         address,
@@ -68,7 +82,7 @@ export default function ShippingAddressScreen() {
         lng,
       })
     );
-    navigate("/map");
+    navigate('/map');
   };
   return (
     <div>

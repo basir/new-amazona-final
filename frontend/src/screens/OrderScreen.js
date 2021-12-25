@@ -1,13 +1,15 @@
 import Axios from 'axios';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { useNavigate, useParams } from 'react-router-dom';
-import React, { useEffect, useReducer } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useContext, useEffect, useReducer } from 'react';
 import { Link } from 'react-router-dom';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { getError } from '../utils';
 import { toast } from 'react-toastify';
+import { Store } from '../store';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -43,12 +45,13 @@ function reducer(state, action) {
   }
 }
 export default function OrderScreen() {
+  const { state } = useContext(Store);
+  const { userInfo } = state;
+
   const params = useParams();
   const navigate = useNavigate();
   const { id: orderId } = params;
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
-
-  const { userInfo } = useSelector((state) => state.userSignin);
 
   const [
     { loading, error, order, successPay, loadingDeliver, successDeliver },
@@ -58,19 +61,6 @@ export default function OrderScreen() {
     order: {},
     error: '',
   });
-  const {
-    shippingAddress,
-    paymentMethod,
-    orderItems,
-    itemsPrice,
-    taxPrice,
-    shippingPrice,
-    totalPrice,
-    isPaid,
-    paidAt,
-    isDelivered,
-    deliveredAt,
-  } = order;
 
   useEffect(() => {
     if (!userInfo) {
@@ -131,7 +121,7 @@ export default function OrderScreen() {
       .create({
         purchase_units: [
           {
-            amount: { value: totalPrice },
+            amount: { value: order.totalPrice },
           },
         ],
       })
@@ -189,8 +179,8 @@ export default function OrderScreen() {
   ) : (
     <div>
       <h1 className="my-3">Order {orderId}</h1>
-      <div className="row">
-        <div className="col-md-8">
+      <Row>
+        <Col md={8}>
           <div className="mb-3 card card-body">
             <h2>Shipping</h2>
             <p>
@@ -236,7 +226,7 @@ export default function OrderScreen() {
                       <Link to={`/product/${item.product}`}>{item.name}</Link>
                     </div>
                     <div className="col-md-3">
-                      <span>{item.qty}</span>
+                      <span>{item.quantity}</span>
                     </div>
                     <div className="col-md-3">${item.price}</div>
                   </div>
@@ -244,38 +234,38 @@ export default function OrderScreen() {
               ))}
             </ul>
           </div>
-        </div>
-        <div className="col-md-4">
+        </Col>
+        <Col md={4}>
           <div className="card card-body">
             <h2>Order Summary</h2>
             <ul className="list-group list-group-flush">
               <li className="list-group-item">
-                <div className="row">
+                <Row>
                   <div className="col">Items</div>
                   <div className="col">${order.itemsPrice.toFixed(2)}</div>
-                </div>
+                </Row>
               </li>
               <li className="list-group-item">
-                <div className="row">
+                <Row>
                   <div className="col">Shipping</div>
                   <div className="col">${order.shippingPrice.toFixed(2)}</div>
-                </div>
+                </Row>
               </li>
               <li className="list-group-item">
-                <div className="row">
+                <Row>
                   <div className="col">Tax</div>
                   <div className="col">${order.taxPrice.toFixed(2)}</div>
-                </div>
+                </Row>
               </li>
               <li className="list-group-item">
-                <div className="row">
+                <Row>
                   <div className="col">
                     <strong> Order Total</strong>
                   </div>
                   <div className="col">
                     <strong>${order.totalPrice.toFixed(2)}</strong>
                   </div>
-                </div>
+                </Row>
               </li>
 
               {!order.isPaid && (
@@ -309,8 +299,8 @@ export default function OrderScreen() {
               )}
             </ul>
           </div>
-        </div>
-      </div>
+        </Col>
+      </Row>
     </div>
   );
 }

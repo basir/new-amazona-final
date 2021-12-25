@@ -1,10 +1,10 @@
 import Axios from 'axios';
-import React, { useEffect, useReducer } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useContext, useEffect, useReducer } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
+import { Store } from '../store';
 import { getError } from '../utils';
 
 const reducer = (state, action) => {
@@ -54,8 +54,8 @@ export default function OrderListScreen() {
 
   const navigate = useNavigate();
 
-  const userSignin = useSelector((state) => state.userSignin);
-  const { userInfo } = userSignin;
+  const { state } = useContext(Store);
+  const { userInfo } = state;
 
   useEffect(() => {
     const fetchData = async () => {

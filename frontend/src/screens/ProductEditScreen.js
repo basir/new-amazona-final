@@ -1,11 +1,12 @@
-import React, { useEffect, useReducer, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
+
 import Axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { getError } from '../utils';
 import { toast } from 'react-toastify';
+import { Store } from '../store';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -33,9 +34,9 @@ const reducer = (state, action) => {
   }
 };
 
-export default function ProductEditScreen(props) {
-  const userSignin = useSelector((state) => state.userSignin);
-  const { userInfo } = userSignin;
+export default function ProductEditScreen() {
+  const { state } = useContext(Store);
+  const { userInfo } = state;
   const [{ loading, error, loadingUpload, loadingUpdate }, dispatch] =
     useReducer(reducer, {
       loading: true,

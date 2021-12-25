@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import socketIOClient from 'socket.io-client';
-import { useSelector } from 'react-redux';
+import Row from 'react-bootstrap/Row';
 import MessageBox from '../components/MessageBox';
+import { Store } from '../store';
 
 let allUsers = [];
 let allMessages = [];
@@ -18,8 +19,9 @@ export default function SupportScreen() {
   const [messageBody, setMessageBody] = useState('');
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState([]);
-  const userSignin = useSelector((state) => state.userSignin);
-  const { userInfo } = userSignin;
+
+  const { state } = useContext(Store);
+  const { userInfo } = state;
 
   useEffect(() => {
     if (uiMessagesRef.current) {
@@ -145,9 +147,9 @@ export default function SupportScreen() {
           <MessageBox>Select a user to start chat</MessageBox>
         ) : (
           <div>
-            <div className="row">
+            <Row>
               <strong>Chat with {selectedUser.name} </strong>
-            </div>
+            </Row>
             <ul ref={uiMessagesRef}>
               {messages.length === 0 && <li>No message.</li>}
               {messages.map((msg, index) => (

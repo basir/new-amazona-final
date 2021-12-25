@@ -1,10 +1,11 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
+import { Store } from '../store';
 
 const SellerRoute = ({ children }) => {
-  const userSignin = useSelector((state) => state.userSignin);
-  const { userInfo } = userSignin;
+  const { state } = useContext(Store);
+  const { userInfo } = state;
+
   return userInfo && userInfo.isSeller ? children : <Navigate to="/signin" />;
 };
 

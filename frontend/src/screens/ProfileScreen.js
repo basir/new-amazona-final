@@ -1,9 +1,9 @@
 import Axios from 'axios';
-import React, { useEffect, useReducer, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
+import { Store } from '../store';
 import { getError } from '../utils';
 
 const reducer = (state, action) => {
@@ -27,8 +27,9 @@ const reducer = (state, action) => {
 };
 
 export default function ProfileScreen() {
-  const userSignin = useSelector((state) => state.userSignin);
-  const { userInfo } = userSignin;
+  const { state, dispatch: ctxDispatch } = useContext(Store);
+  const { userInfo } = state;
+
   const [{ loading, error, loadingUpdate }, dispatch] = useReducer(reducer, {
     loading: true,
     error: '',
@@ -42,8 +43,6 @@ export default function ProfileScreen() {
   const [sellerName, setSellerName] = useState('');
   const [sellerLogo, setSellerLogo] = useState('');
   const [sellerDescription, setSellerDescription] = useState('');
-
-  const rdxDispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -96,7 +95,8 @@ export default function ProfileScreen() {
           type: 'UPDATE_SUCCESS',
         });
 
-        rdxDispatch({ type: 'USER_SIGNIN_SUCCESS', payload: data });
+        ctxDispatch({ type: 'USER_SIGNIN', payload: data });
+        localStorage.setItem('userInfo', JSON.stringify(data));
         toast.success('User updated successfully');
       }
     } catch (error) {

@@ -1,10 +1,11 @@
 import Axios from 'axios';
-import React, { useEffect, useReducer } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useContext, useEffect, useReducer } from 'react';
+import Row from 'react-bootstrap/Row';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
+import { Store } from '../store';
 import { getError } from '../utils';
 
 const reducer = (state, action) => {
@@ -68,8 +69,8 @@ export default function ProductListScreen() {
   const sp = new URLSearchParams(search);
   const page = sp.get('page') || 1;
 
-  const userSignin = useSelector((state) => state.userSignin);
-  const { userInfo } = userSignin;
+  const { state } = useContext(Store);
+  const { userInfo } = state;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -136,7 +137,7 @@ export default function ProductListScreen() {
   };
   return (
     <div>
-      <div className="row">
+      <Row>
         <h1 className="col">Products</h1>
         <div className="col text-end">
           <button
@@ -147,7 +148,7 @@ export default function ProductListScreen() {
             Create Product
           </button>
         </div>
-      </div>
+      </Row>
 
       {loadingDelete && <LoadingBox></LoadingBox>}
       {loadingCreate && <LoadingBox></LoadingBox>}

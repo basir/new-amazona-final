@@ -13,7 +13,7 @@ export default function SigninScreen() {
   const { search } = useLocation();
   const redirectInUrl = new URLSearchParams(search).get('redirect');
   const redirect = redirectInUrl ? redirectInUrl : '/';
-  const { state, dispatch } = useContext(Store);
+  const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
 
   const submitHandler = async (e) => {
@@ -23,7 +23,7 @@ export default function SigninScreen() {
         email,
         password,
       });
-      dispatch({ type: 'USER_SIGNIN', payload: data });
+      ctxDispatch({ type: 'USER_SIGNIN', payload: data });
       localStorage.setItem('userInfo', JSON.stringify(data));
       navigate(redirect || '/');
     } catch (err) {

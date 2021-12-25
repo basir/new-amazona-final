@@ -6,10 +6,9 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import Row from 'react-bootstrap/Row';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { addToCart } from '../actions/cartActions';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import Rating from '../components/Rating';
@@ -32,13 +31,12 @@ const reducer = (state, action) => {
       return { ...state, loadingCreateReview: false };
     case 'CREATE_FAIL':
       return { ...state, loadingCreateReview: false };
-
     default:
       return state;
   }
 };
 
-export default function ProductScreen(props) {
+export default function ProductScreen() {
   let reviewsRef = useRef();
 
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -58,7 +56,7 @@ export default function ProductScreen(props) {
   const [comment, setComment] = useState('');
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchData = async () => {
       dispatch({ type: 'FETCH_REQUEST' });
       try {
         const { data } = await Axios.get(`/api/products/${productId}`);
@@ -71,7 +69,7 @@ export default function ProductScreen(props) {
       }
     };
 
-    fetchProduct();
+    fetchData();
   }, [dispatch, productId]);
 
   const addToCartHandler = async () => {
@@ -123,7 +121,7 @@ export default function ProductScreen(props) {
     <MessageBox variant="danger">{error}</MessageBox>
   ) : (
     <div>
-      <div className="row">
+      <Row>
         <div className="col-md-6">
           <img
             className="img-large"
@@ -197,7 +195,7 @@ export default function ProductScreen(props) {
             </ul>
           </div>
         </div>
-      </div>
+      </Row>
       <div>
         <h2 ref={reviewsRef}>Reviews</h2>
 

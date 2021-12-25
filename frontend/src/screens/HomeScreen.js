@@ -1,4 +1,6 @@
 import React, { useEffect, useReducer } from 'react';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { Carousel } from 'react-responsive-carousel';
 import Product from '../components/Product';
@@ -77,16 +79,13 @@ export default function HomeScreen() {
           </Carousel>
           <h2>Featured Products</h2>
           {products.length === 0 && <MessageBox>No Product Found</MessageBox>}
-          <div className="row">
+          <Row>
             {products.map((product) => (
-              <div
-                key={product._id}
-                className="col-sm-6 col-md-4  col-lg-3  mb-3"
-              >
+              <Col sm={6} md={4} lg={3} key={product._id} className="mb-3">
                 <Product product={product}></Product>
-              </div>
+              </Col>
             ))}
-          </div>
+          </Row>
         </>
       )}
     </div>

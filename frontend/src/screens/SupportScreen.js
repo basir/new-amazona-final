@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import MessageBox from '../components/MessageBox';
 import { Store } from '../Store';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 let allUsers = [];
 let allMessages = [];

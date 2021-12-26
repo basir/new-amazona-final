@@ -15,7 +15,7 @@ import MessageBox from '../components/MessageBox';
 import Rating from '../components/Rating';
 import { Store } from '../Store';
 import { getError } from '../utils';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -52,7 +52,7 @@ export default function ProductScreen() {
   const navigate = useNavigate();
 
   const params = useParams();
-  const { id: productId } = params;
+  const { id: slug } = params;
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -61,7 +61,7 @@ export default function ProductScreen() {
     const fetchData = async () => {
       dispatch({ type: 'FETCH_REQUEST' });
       try {
-        const { data } = await Axios.get(`/api/products/${productId}`);
+        const { data } = await Axios.get(`/api/products/slug/${slug}`);
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (error) {
         dispatch({
@@ -72,7 +72,7 @@ export default function ProductScreen() {
     };
 
     fetchData();
-  }, [dispatch, productId]);
+  }, [dispatch, slug]);
 
   const addToCartHandler = async () => {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
@@ -94,7 +94,7 @@ export default function ProductScreen() {
     dispatch({ type: 'CREATE_REQUEST' });
     try {
       const { data } = await Axios.post(
-        `/api/products/${productId}/reviews`,
+        `/api/products/${product._id}/reviews`,
         { rating, comment, name: userInfo.name },
         {
           headers: { Authorization: `Bearer ${userInfo.token}` },

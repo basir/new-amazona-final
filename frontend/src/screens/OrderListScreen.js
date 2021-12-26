@@ -1,6 +1,6 @@
 import Axios from 'axios';
 import React, { useContext, useEffect, useReducer } from 'react';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';

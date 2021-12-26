@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+
 import { LinkContainer } from 'react-router-bootstrap';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
@@ -37,7 +39,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Store } from './Store';
 import { getError } from './utils';
 import Axios from 'axios';
-import Helmet from 'react-helmet';
 
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -49,7 +50,7 @@ function App() {
     ctxDispatch({ type: 'USER_SIGNOUT' });
     localStorage.removeItem('userInfo');
     localStorage.removeItem('cartItems');
-    localStorage.removeItem('shippinhAddress');
+    localStorage.removeItem('shippingAddress');
     localStorage.removeItem('paymentMethod');
     window.location.href = '/signin';
   };
@@ -183,7 +184,10 @@ function App() {
           </Nav>
         </div>
 
-        <main className="container mt-3">
+        <main
+          className="container mt-3"
+          onClick={() => setSidebarIsOpen(false)}
+        >
           <Routes>
             <Route path="/seller/:id" element={<SellerScreen />}></Route>
             <Route path="/cart" element={<CartScreen />}></Route>

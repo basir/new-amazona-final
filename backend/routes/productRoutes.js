@@ -22,9 +22,23 @@ productRouter.get(
   expressAsyncHandler(async ({ params }, res) => {
     const products = await Product.find({ seller: params.id }).populate(
       'seller',
-      'seller.name seller.logo'
+      'seller.name seller.logo seller.rating seller.numReviews'
     );
     res.send(products);
+  })
+);
+productRouter.get(
+  '/slug/:slug',
+  expressAsyncHandler(async ({ params }, res) => {
+    const product = await Product.findOne({ slug: params.slug }).populate(
+      'seller',
+      'seller.name seller.logo seller.rating seller.numReviews'
+    );
+    if (product) {
+      res.send(product);
+    } else {
+      res.status(404).send({ message: 'Product Not Found' });
+    }
   })
 );
 
@@ -38,7 +52,7 @@ productRouter.get(
     const brand = query.brand || '';
     const price = query.price || '';
     const rating = query.rating || '';
-    const sort = query.sort || '';
+    const order = query.order || '';
     const searchQuery = query.query || '';
 
     const queryFilter =
@@ -70,16 +84,16 @@ productRouter.get(
           }
         : {};
 
-    const order =
-      sort === 'featured'
+    const sortOrder =
+      order === 'featured'
         ? { featured: -1 }
-        : sort === 'lowest'
+        : order === 'lowest'
         ? { price: 1 }
-        : sort === 'highest'
+        : order === 'highest'
         ? { price: -1 }
-        : sort === 'toprated'
+        : order === 'toprated'
         ? { rating: -1 }
-        : sort === 'newest'
+        : order === 'newest'
         ? { createdAt: -1 }
         : { _id: -1 };
 
@@ -91,7 +105,7 @@ productRouter.get(
       ...ratingFilter,
     })
       .populate('seller', 'seller.name seller.logo')
-      .sort(order)
+      .sort(sortOrder)
       .skip(pageSize * (page - 1))
       .limit(pageSize);
 

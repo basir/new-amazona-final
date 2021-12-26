@@ -7,7 +7,7 @@ import MessageBox from '../components/MessageBox';
 import { getError } from '../utils';
 import { toast } from 'react-toastify';
 import { Store } from '../Store';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 const reducer = (state, action) => {
   switch (action.type) {

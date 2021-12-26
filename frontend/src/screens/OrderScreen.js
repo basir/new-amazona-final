@@ -10,7 +10,7 @@ import MessageBox from '../components/MessageBox';
 import { getError } from '../utils';
 import { toast } from 'react-toastify';
 import { Store } from '../Store';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -219,7 +219,7 @@ export default function OrderScreen() {
 
             <ul className="list-group list-group-flush">
               {order.orderItems.map((item) => (
-                <li className="list-group-item" key={item.product}>
+                <li className="list-group-item" key={item._id}>
                   <Row className="align-items-center">
                     <Col md={6}>
                       <img
@@ -227,7 +227,7 @@ export default function OrderScreen() {
                         alt={item.name}
                         className="img-fluid rounded img-thumbnail"
                       ></img>{' '}
-                      <Link to={`/product/${item.product}`}>{item.name}</Link>
+                      <Link to={`/product/${item.slug}`}>{item.name}</Link>
                     </Col>
                     <Col md={3}>
                       <span>{item.quantity}</span>

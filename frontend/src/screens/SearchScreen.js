@@ -1,7 +1,9 @@
 import Axios from 'axios';
 import React, { useEffect, useReducer, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
 import { toast } from 'react-toastify';
+import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import LoadingBox from '../components/LoadingBox';
@@ -9,7 +11,7 @@ import MessageBox from '../components/MessageBox';
 import Product from '../components/Product';
 import Rating from '../components/Rating';
 import { getError, prices, ratings } from '../utils';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -21,6 +23,7 @@ const reducer = (state, action) => {
         products: action.payload.products,
         page: action.payload.page,
         pages: action.payload.pages,
+        countProducts: action.payload.countProducts,
         loading: false,
       };
     case 'FETCH_FAIL':
@@ -43,10 +46,11 @@ export default function SearchScreen() {
   const order = sp.get('order') || 'newest';
   const page = sp.get('page') || 1;
 
-  const [{ loading, error, products, pages }, dispatch] = useReducer(reducer, {
-    loading: true,
-    error: '',
-  });
+  const [{ loading, error, products, pages, countProducts }, dispatch] =
+    useReducer(reducer, {
+      loading: true,
+      error: '',
+    });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -183,7 +187,7 @@ export default function SearchScreen() {
                     <MessageBox variant="danger">{error}</MessageBox>
                   ) : (
                     <div>
-                      {products.length === 0 ? 'No' : products.length} Results
+                      {countProducts === 0 ? 'No' : countProducts} Results
                       {query !== 'all' && ' : ' + query}
                       {category !== 'all' && ' : ' + category}
                       {price !== 'all' && ' : Price ' + price}
@@ -232,13 +236,17 @@ export default function SearchScreen() {
 
               <div>
                 {[...Array(pages).keys()].map((x) => (
-                  <Link
-                    className={x + 1 === Number(page) ? 'btn text-bold' : 'btn'}
-                    key={x + 1}
+                  <LinkContainer
+                    className="mx-1"
                     to={getFilterUrl({ page: x + 1 })}
                   >
-                    {x + 1}
-                  </Link>
+                    <Button
+                      className={Number(page) === x + 1 ? 'text-bold' : ''}
+                      variant="light"
+                    >
+                      {x + 1}
+                    </Button>
+                  </LinkContainer>
                 ))}
               </div>
             </>

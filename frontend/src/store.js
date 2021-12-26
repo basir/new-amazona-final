@@ -3,7 +3,6 @@ import logger from 'use-reducer-logger';
 
 export const Store = createContext();
 const initialState = {
-  darkMode: localStorage.getItem('darkMode') === 'ON' ? true : false,
   cart: {
     cartItems: localStorage.getItem('cartItems')
       ? JSON.parse(localStorage.getItem('cartItems'))
@@ -90,7 +89,10 @@ function reducer(state, action) {
 }
 
 export function StoreProvider(props) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(
+    process.env.NODE_ENV === 'development' ? logger(reducer) : reducer,
+    initialState
+  );
 
   const value = { state, dispatch };
   return <Store.Provider value={value}>{props.children}</Store.Provider>;

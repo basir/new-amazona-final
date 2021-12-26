@@ -237,6 +237,7 @@ export default function SearchScreen() {
               <div>
                 {[...Array(pages).keys()].map((x) => (
                   <LinkContainer
+                    key={x + 1}
                     className="mx-1"
                     to={getFilterUrl({ page: x + 1 })}
                   >

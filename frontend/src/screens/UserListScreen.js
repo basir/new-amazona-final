@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useReducer } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import Button from 'react-bootstrap/Button';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { Store } from '../Store';
@@ -114,21 +115,21 @@ export default function UserListScreen() {
                 <td>{user.isSeller ? 'YES' : ' NO'}</td>
                 <td>{user.isAdmin ? 'YES' : 'NO'}</td>
                 <td>
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-light"
+                    variant="light"
                     onClick={() => navigate(`/user/${user._id}/edit`)}
                   >
                     Edit
-                  </button>
+                  </Button>
                   &nbsp;
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-light"
+                    variant="light"
                     onClick={() => deleteHandler(user)}
                   >
                     Delete
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}

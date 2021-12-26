@@ -1,12 +1,14 @@
 import Axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Store } from '../Store';
 import { getError } from '../utils';
 
-export default function RegisterScreen(props) {
+export default function SignupScreen() {
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -26,7 +28,7 @@ export default function RegisterScreen(props) {
       if (password !== confirmPassword) {
         toast.error('Passwords do not match');
       } else {
-        const { data } = await Axios.post('/api/users/register', {
+        const { data } = await Axios.post('/api/users/signup', {
           name,
           email,
           password,
@@ -55,77 +57,50 @@ export default function RegisterScreen(props) {
   return (
     <div className="container small-container">
       <Helmet>
-        <title>Register</title>
+        <title>Sign Up</title>
       </Helmet>
-      <h1 className="my-3">Register</h1>
-      <form onSubmit={submitHandler}>
-        <div className="mb-3">
-          <label htmlFor="name" className="form-label">
-            Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            placeholder="Enter name"
-            required
-            className="form-control"
-            onChange={(e) => setName(e.target.value)}
-          ></input>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="email" className="form-label">
-            Email
-          </label>
-          <input
+      <h1 className="my-3">Sign Up</h1>
+      <Form onSubmit={submitHandler}>
+        <Form.Group className="mb-3" controlId="name">
+          <Form.Label>Name</Form.Label>
+          <Form.Control onChange={(e) => setName(e.target.value)} required />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="email">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
             type="email"
-            id="email"
-            placeholder="Enter email"
-            required
-            className="form-control"
             onChange={(e) => setEmail(e.target.value)}
-          ></input>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="password" className="form-label">
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            placeholder="Enter password"
             required
-            className="form-control"
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="password">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
+            type="password"
             onChange={(e) => setPassword(e.target.value)}
-          ></input>
-        </div>
+            required
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3" controlId="confirmPassword">
+          <Form.Label>Confirm Password</Form.Label>
+          <Form.Control
+            type="password"
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </Form.Group>
 
         <div className="mb-3">
-          <label htmlFor="confirmPassword" className="form-label">
-            Confirm Password
-          </label>
-          <input
-            type="password"
-            id="confirmPassword"
-            placeholder="Confirm Password"
-            required
-            className="form-control"
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          ></input>
+          <Button type="submit">Sign Up</Button>
         </div>
         <div className="mb-3">
-          <label />
-          <button className="btn btn-primary" type="submit">
-            Register
-          </button>
+          Already have an account?{' '}
+          <Link to={`/signin?redirect=${redirect}`}>Sign-In</Link>
         </div>
-        <div className="mb-3">
-          <label />
-          <div>
-            Already have an account?{' '}
-            <Link to={`/signin?redirect=${redirect}`}>Sign-In</Link>
-          </div>
-        </div>
-      </form>
+      </Form>
     </div>
   );
 }

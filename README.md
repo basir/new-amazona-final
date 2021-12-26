@@ -37,11 +37,11 @@ $ cd amazona
 - Local MongoDB
   - Install it from [here](https://www.mongodb.com/try/download/community)
   - Create .env file in root folder
-  - Set MONGODB_URL=mongodb://localhost/amazona
+  - Set MONGODB_URI=mongodb://localhost/amazona
 - Atlas Cloud MongoDB
   - Create database at [https://cloud.mongodb.com](https://cloud.mongodb.com)
   - Create .env file in root folder
-  - Set MONGODB_URL=mongodb+srv://your-db-connection
+  - Set MONGODB_URI=mongodb+srv://your-db-connection
 
 ### 3. Run Backend
 
@@ -185,7 +185,7 @@ $ npm start
     2. connect to mongodb
     3. create config.js
     4. npm install dotenv
-    5. export MONGODB_URL
+    5. export MONGODB_URI
     6. create models/userModel.js
     7. create userSchema and userModel
     8. create userRoute
@@ -212,15 +212,15 @@ $ npm start
     1. create signin constants, actions and reducers
     2. add reducer to store.js
     3. use action in SigninScreen.js
-23. Create Register Screen
-    1. create API for /api/users/register
+23. Create Signup Screen
+    1. create API for /api/users/signup
     2. insert new user to database
     3. return user info and token
-    4. create RegisterScreen
+    4. create SignupScreen
     5. Add fields
     6. Style fields
     7. Add screen to App.js
-    8. create register action and reducer
+    8. create signup action and reducer
     9. check validation and create user
 24. Create Shipping Screen
     1. create CheckoutSteps.js component

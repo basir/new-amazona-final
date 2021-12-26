@@ -48,7 +48,7 @@ userRouter.post(
 );
 
 userRouter.post(
-  '/register',
+  '/signup',
   expressAsyncHandler(async (req, res) => {
     const user = new User({
       name: req.body.name,

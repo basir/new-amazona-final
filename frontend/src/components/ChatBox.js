@@ -4,6 +4,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import InputGroup from 'react-bootstrap/InputGroup';
+import FormControl from 'react-bootstrap/FormControl';
 
 const ENDPOINT =
   window.location.host.indexOf('localhost') >= 0
@@ -69,20 +71,19 @@ export default function ChatBox(props) {
   return (
     <div className="chatbox">
       {!isOpen ? (
-        <Button type="button" onClick={supportHandler}>
-          <i className="fa fa-support" />
+        <Button variant="light" type="button" onClick={supportHandler}>
+          <i className="fas fa-life-ring" />
         </Button>
       ) : (
         <Card>
           <Card.Body>
-            <Row>
+            <Row className="justify-content-between align-items-center">
               <Col>
                 <strong>Support </strong>
               </Col>
-              <Col>
-                {' '}
-                <Button type="button" onClick={closeHandler}>
-                  <i className="fa fa-close" />
+              <Col className="text-end">
+                <Button variant="light" type="button" onClick={closeHandler}>
+                  <i class="fas fa-times-circle"></i>
                 </Button>
               </Col>
             </Row>
@@ -94,14 +95,23 @@ export default function ChatBox(props) {
               ))}
             </ul>
             <div>
-              <form onSubmit={submitHandler} className="row">
-                <input
-                  value={messageBody}
-                  onChange={(e) => setMessageBody(e.target.value)}
-                  type="text"
-                  placeholder="type message"
-                />
-                <button type="submit">Send</button>
+              <form onSubmit={submitHandler}>
+                <InputGroup>
+                  <FormControl
+                    type="text"
+                    id="q"
+                    value={messageBody}
+                    onChange={(e) => setMessageBody(e.target.value)}
+                    required
+                  />
+                  <Button
+                    variant="outline-primary"
+                    type="submit"
+                    id="button-search"
+                  >
+                    Send
+                  </Button>
+                </InputGroup>
               </form>
             </div>
           </Card.Body>

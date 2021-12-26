@@ -1,6 +1,9 @@
 import Axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Form from 'react-bootstrap/Form';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Store } from '../Store';
@@ -38,55 +41,37 @@ export default function SigninScreen() {
   }, [navigate, redirect, userInfo]);
 
   return (
-    <div className="container small-container">
+    <Container className="small-container">
       <Helmet>
         <title>Sign In</title>
       </Helmet>
       <h1 className="my-3">Sign In</h1>
-      <form onSubmit={submitHandler}>
-        <div className="mb-3">
-          <label htmlFor="email" className="form-label">
-            Email
-          </label>
-          <input
+      <Form onSubmit={submitHandler}>
+        <Form.Group className="mb-3" controlId="email">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
             type="email"
-            id="email"
-            placeholder="Enter email"
-            required
-            className="form-control"
             onChange={(e) => setEmail(e.target.value)}
-          ></input>
-        </div>
-        <div className="mb-3">
-          <label htmlFor="password" className="form-label">
-            Password
-          </label>
-          <input
-            type="password"
-            id="password"
-            placeholder="Enter password"
             required
-            className="form-control"
+          />
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="password">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
+            type="password"
             onChange={(e) => setPassword(e.target.value)}
-          ></input>
-        </div>
+            required
+          />
+        </Form.Group>
 
         <div className="mb-3">
-          <label />
-          <button className="btn btn-primary" type="submit">
-            Sign In
-          </button>
+          <Button type="submit">Sign In</Button>
         </div>
         <div className="mb-3">
-          <label />
-          <div>
-            New customer?{' '}
-            <Link to={`/register?redirect=${redirect}`}>
-              Create your account
-            </Link>
-          </div>
+          New customer?{' '}
+          <Link to={`/signup?redirect=${redirect}`}>Create your account</Link>
         </div>
-      </form>
-    </div>
+      </Form>
+    </Container>
   );
 }

@@ -1,10 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import CheckoutSteps from '../components/CheckoutSteps';
 import { Store } from '../Store';
 
-export default function PaymentMethodScreen(props) {
+export default function PaymentMethodScreen() {
   const navigate = useNavigate();
 
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -34,40 +36,28 @@ export default function PaymentMethodScreen(props) {
         </Helmet>
         <h1 className="my-3">Payment Method</h1>
         <form onSubmit={submitHandler}>
-          <div className="form-check mb-3">
-            <input
-              className="form-check-input"
+          <div className="mb-3">
+            <Form.Check
               type="radio"
-              name="paymentMethod"
               id="PayPal"
+              label="PayPal"
               value="PayPal"
               checked={paymentMethodName === 'PayPal'}
               onChange={(e) => setPaymentMethod(e.target.value)}
             />
-            <label className="form-check-label" htmlFor="PayPal">
-              PayPal
-            </label>
           </div>
-          <div className="form-check mb-3">
-            <input
-              className="form-check-input"
+          <div className="mb-3">
+            <Form.Check
               type="radio"
-              name="paymentMethod"
               id="Stripe"
+              label="Stripe"
               value="Stripe"
               checked={paymentMethodName === 'Stripe'}
               onChange={(e) => setPaymentMethod(e.target.value)}
             />
-            <label className="form-check-label" htmlFor="Stripe">
-              Stripe
-            </label>
           </div>
-
           <div className="mb-3">
-            <label />
-            <button className="btn btn-primary" type="submit">
-              Continue
-            </button>
+            <Button type="submit">Continue</Button>
           </div>
         </form>
       </div>

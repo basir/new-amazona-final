@@ -1,5 +1,6 @@
 import Axios from 'axios';
 import React, { useContext, useReducer } from 'react';
+import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,6 +11,8 @@ import MessageBox from '../components/MessageBox';
 import { Store } from '../Store';
 import { getError } from '../utils';
 import { Helmet } from 'react-helmet-async';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Card from 'react-bootstrap/Card';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -93,100 +96,103 @@ export default function PlaceOrderScreen(props) {
       <h1 className="my-3">Preview Order</h1>
       <Row>
         <Col md={8}>
-          <div className="mb-3 card card-body">
-            <h2>Shipping</h2>
-            <p>
-              <strong>Name:</strong> {cart.shippingAddress.fullName} <br />
-              <strong>Address: </strong> {cart.shippingAddress.address},
-              {cart.shippingAddress.city}, {cart.shippingAddress.postalCode},
-              {cart.shippingAddress.country}
-            </p>
-            <Link to="/shipping">Edit</Link>
-          </div>
-
-          <div className="mb-3 card card-body">
-            <h2>Payment</h2>
-            <p>
-              <strong>Method:</strong> {cart.paymentMethod}
-            </p>
-            <Link to="/payment">Edit</Link>
-          </div>
-
-          <div className="mb-3 card card-body">
-            <h2>Items</h2>
-            <ul className="list-group list-group-flush">
-              {cart.cartItems.map((item) => (
-                <li className="list-group-item" key={item._id}>
-                  <Row className="align-items-center">
-                    <Col md={6}>
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="img-fluid rounded img-thumbnail"
-                      ></img>{' '}
-                      <Link to={`/product/${item.slug}`}>{item.name}</Link>
-                    </Col>
-                    <Col md={3}>
-                      <span>{item.quantity}</span>
-                    </Col>
-                    <Col md={3}>${item.price}</Col>
-                  </Row>
-                </li>
-              ))}
-            </ul>
-            <Link to="/cart">Edit</Link>
-          </div>
+          <Card className="mb-3">
+            <Card.Body>
+              <Card.Title>Shipping</Card.Title>
+              <Card.Text>
+                <strong>Name:</strong> {cart.shippingAddress.fullName} <br />
+                <strong>Address: </strong> {cart.shippingAddress.address},
+                {cart.shippingAddress.city}, {cart.shippingAddress.postalCode},
+                {cart.shippingAddress.country}
+              </Card.Text>
+              <Link to="/shipping">Edit</Link>
+            </Card.Body>
+          </Card>
+          <Card className="mb-3">
+            <Card.Body>
+              <Card.Title>Payment</Card.Title>
+              <Card.Text>
+                <strong>Method:</strong> {cart.paymentMethod}
+              </Card.Text>
+              <Link to="/payment">Edit</Link>
+            </Card.Body>
+          </Card>
+          <Card className="mb-3">
+            <Card.Body>
+              <Card.Title>Items</Card.Title>
+              <ListGroup variant="flush">
+                {cart.cartItems.map((item) => (
+                  <ListGroup.Item key={item._id}>
+                    <Row className="align-items-center">
+                      <Col md={6}>
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="img-fluid rounded img-thumbnail"
+                        ></img>{' '}
+                        <Link to={`/product/${item.slug}`}>{item.name}</Link>
+                      </Col>
+                      <Col md={3}>
+                        <span>{item.quantity}</span>
+                      </Col>
+                      <Col md={3}>${item.price}</Col>
+                    </Row>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+              <Link to="/cart">Edit</Link>
+            </Card.Body>
+          </Card>
         </Col>
         <Col md={4}>
-          <div className="card card-body">
-            <h2>Order Summary</h2>
-            <ul className="list-group list-group-flush">
-              <li className="list-group-item">
-                <Row>
-                  <Col>Items</Col>
-                  <Col>${cart.itemsPrice.toFixed(2)}</Col>
-                </Row>
-              </li>
-              <li className="list-group-item">
-                <Row>
-                  <Col>Shipping</Col>
-                  <Col>${cart.shippingPrice.toFixed(2)}</Col>
-                </Row>
-              </li>
-              <li className="list-group-item">
-                <Row>
-                  <Col>Tax</Col>
-                  <Col>${cart.taxPrice.toFixed(2)}</Col>
-                </Row>
-              </li>
-              <li className="list-group-item">
-                <Row>
-                  <Col>
-                    <strong> Order Total</strong>
-                  </Col>
-                  <Col>
-                    <strong>${cart.totalPrice.toFixed(2)}</strong>
-                  </Col>
-                </Row>
-              </li>
-
-              <li className="list-group-item">
-                <div className="d-grid">
-                  <button
-                    type="button"
-                    onClick={placeOrderHandler}
-                    className="btn btn-primary"
-                    disabled={cart.cartItems.length === 0}
-                  >
-                    Place Order
-                  </button>
-                </div>
-
-                {loading && <LoadingBox></LoadingBox>}
-                {error && <MessageBox variant="danger">{error}</MessageBox>}
-              </li>
-            </ul>
-          </div>
+          <Card>
+            <Card.Body>
+              <Card.Title>Order Summary</Card.Title>
+              <ListGroup variant="flush">
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Items</Col>
+                    <Col>${cart.itemsPrice.toFixed(2)}</Col>
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Shipping</Col>
+                    <Col>${cart.shippingPrice.toFixed(2)}</Col>
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Tax</Col>
+                    <Col>${cart.taxPrice.toFixed(2)}</Col>
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>
+                      <strong> Order Total</strong>
+                    </Col>
+                    <Col>
+                      <strong>${cart.totalPrice.toFixed(2)}</strong>
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <div className="d-grid">
+                    <Button
+                      type="button"
+                      onClick={placeOrderHandler}
+                      disabled={cart.cartItems.length === 0}
+                    >
+                      Place Order
+                    </Button>
+                  </div>
+                  {loading && <LoadingBox></LoadingBox>}
+                  {error && <MessageBox variant="danger">{error}</MessageBox>}
+                </ListGroup.Item>
+              </ListGroup>
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
     </div>

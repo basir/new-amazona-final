@@ -1,6 +1,9 @@
 import Axios from 'axios';
 import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import Button from 'react-bootstrap/Button';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import Form from 'react-bootstrap/Form';
 import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
@@ -118,113 +121,86 @@ export default function ProfileScreen() {
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
         <form onSubmit={submitHandler}>
-          <div className="mb-3">
-            <label htmlFor="name" className="form-label">
-              Name
-            </label>
-            <input
-              id="name"
-              type="text"
-              placeholder="Enter name"
+          <Form.Group className="mb-3" controlId="name">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="form-control"
-            ></input>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              Email
-            </label>
-            <input
-              id="email"
-              type="text"
-              placeholder="Enter email"
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="name">
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="form-control"
-            ></input>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
-            <input
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="password">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
               type="password"
-              id="password"
-              placeholder="Enter password"
-              className="form-control"
               onChange={(e) => setPassword(e.target.value)}
-            ></input>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="confirmPassword" className="form-label">
-              Confirm Password
-            </label>
-            <input
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="password">
+            <Form.Label>Confirm Password</Form.Label>
+            <Form.Control
               type="password"
-              id="confirmPassword"
-              placeholder="Confirm Password"
-              className="form-control"
               onChange={(e) => setConfirmPassword(e.target.value)}
-            ></input>
-          </div>
+            />
+          </Form.Group>
 
           {isSeller && (
             <>
               <h2>Seller</h2>
 
-              <div className="mb-3">
-                <label htmlFor="sellerName" className="form-label">
-                  seller Name
-                </label>
-                <input
-                  id="sellerName"
-                  type="text"
-                  placeholder="Enter sellerName"
+              <Form.Group className="mb-3" controlId="sellerName">
+                <Form.Label>seller Name</Form.Label>
+                <Form.Control
                   value={sellerName}
                   onChange={(e) => setSellerName(e.target.value)}
-                  className="form-control"
-                ></input>
-              </div>
+                  required
+                />
+              </Form.Group>
 
-              <div className="mb-3">
-                <label htmlFor="sellerLogo" className="form-label">
-                  Seller Logo
-                </label>
-                <input
-                  id="sellerLogo"
-                  type="text"
-                  placeholder="Enter sellerLogo"
+              <Form.Group className="mb-3" controlId="sellerLogo">
+                <Form.Label>Seller Logo</Form.Label>
+                <Form.Control
                   value={sellerLogo}
                   onChange={(e) => setSellerLogo(e.target.value)}
-                  className="form-control"
-                ></input>
-              </div>
+                  required
+                />
+              </Form.Group>
 
-              <div className="mb-3">
-                <label htmlFor="sellerDescription" className="form-label">
-                  seller Description
-                </label>
-                <input
-                  id="sellerDescription"
-                  type="text"
-                  placeholder="Enter sellerDescription"
-                  value={sellerDescription}
+              <Form.Group className="mb-3" controlId="sellerLogo">
+                <Form.Label>Seller Logo</Form.Label>
+                <Form.Control
+                  value={sellerLogo}
                   onChange={(e) => setSellerLogo(e.target.value)}
-                  className="form-control"
-                ></input>
-              </div>
+                  required
+                />
+              </Form.Group>
+              <FloatingLabel
+                controlId="floatingTextarea"
+                label="Comments"
+                className="mb-3"
+              >
+                <Form.Control
+                  as="textarea"
+                  placeholder="Leave a comment here"
+                  value={sellerDescription}
+                  onChange={(e) => setSellerDescription(e.target.value)}
+                />
+              </FloatingLabel>
             </>
           )}
           <div className="mb-3">
-            <label />
-            <button
-              className="btn btn-primary"
-              type="submit"
-              disabled={loadingUpdate}
-            >
+            <Button type="submit" disabled={loadingUpdate}>
               Update
-            </button>
+            </Button>
           </div>
           {loadingUpdate && <LoadingBox></LoadingBox>}
         </form>

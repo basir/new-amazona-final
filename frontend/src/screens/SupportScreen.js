@@ -2,6 +2,9 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import socketIOClient from 'socket.io-client';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import FormControl from 'react-bootstrap/FormControl';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Button from 'react-bootstrap/Button';
 import MessageBox from '../components/MessageBox';
 import { Store } from '../Store';
 import { Helmet } from 'react-helmet-async';
@@ -131,13 +134,13 @@ export default function SupportScreen() {
                 key={user._id}
                 className={user._id === selectedUser._id ? '  selected' : '  '}
               >
-                <button
-                  className="block"
+                <Button
+                  varaint="light"
                   type="button"
                   onClick={() => selectUser(user)}
                 >
                   {user.name}
-                </button>
+                </Button>
                 <span
                   className={
                     user.unread ? 'unread' : user.online ? 'online' : 'offline'
@@ -165,13 +168,16 @@ export default function SupportScreen() {
             </ul>
             <div>
               <form onSubmit={submitHandler} className="row">
-                <input
-                  value={messageBody}
-                  onChange={(e) => setMessageBody(e.target.value)}
-                  type="text"
-                  placeholder="type message"
-                />
-                <button type="submit">Send</button>
+                <InputGroup>
+                  <FormControl
+                    type="text"
+                    value={messageBody}
+                    onChange={(e) => setMessageBody(e.target.value)}
+                    placeholder="type message"
+                    aria-describedby="button-search"
+                  />
+                  <Button type="submit">Send</Button>
+                </InputGroup>
               </form>
             </div>
           </div>

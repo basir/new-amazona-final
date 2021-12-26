@@ -46,9 +46,9 @@ export default function CartScreen(props) {
               Cart is empty. <Link to="/">Go Shopping</Link>
             </MessageBox>
           ) : (
-            <ul className="list-group list-group-flush">
+            <ListGroup>
               {cartItems.map((item) => (
-                <li className="list-group-item" key={item._id}>
+                <ListGroup.Item key={item._id}>
                   <Row className="align-items-center">
                     <Col md={4}>
                       <img
@@ -90,9 +90,9 @@ export default function CartScreen(props) {
                       </Button>
                     </Col>
                   </Row>
-                </li>
+                </ListGroup.Item>
               ))}
-            </ul>
+            </ListGroup>
           )}
         </Col>
         <Col md={4}>

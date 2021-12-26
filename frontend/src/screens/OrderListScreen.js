@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
+import Button from 'react-bootstrap/Button';
 import { Store } from '../Store';
 import { getError } from '../utils';
 
@@ -135,23 +136,23 @@ export default function OrderListScreen() {
                     : 'No'}
                 </td>
                 <td>
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-light"
+                    variant="light"
                     onClick={() => {
                       navigate(`/order/${order._id}`);
                     }}
                   >
                     Details
-                  </button>
+                  </Button>
                   &nbsp;
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-light"
+                    variant="light"
                     onClick={() => deleteHandler(order)}
                   >
                     Delete
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}

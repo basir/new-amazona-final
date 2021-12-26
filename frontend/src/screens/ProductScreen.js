@@ -6,8 +6,13 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
@@ -132,76 +137,76 @@ export default function ProductScreen() {
           ></img>
         </Col>
         <Col md={3}>
-          <ul className="list-group list-group-flush">
-            <li className="list-group-item">
+          <ListGroup variant="flush">
+            <ListGroup.Item>
               <Helmet>
                 <title>{product.name}</title>
               </Helmet>
               <h1>{product.name}</h1>
-            </li>
-            <li className="list-group-item">
+            </ListGroup.Item>
+            <ListGroup.Item>
               <Rating
                 rating={product.rating}
                 numReviews={product.numReviews}
               ></Rating>
-            </li>
-            <li className="list-group-item">Pirce : ${product.price}</li>
-            <li className="list-group-item">
+            </ListGroup.Item>
+            <ListGroup.Item>Pirce : ${product.price}</ListGroup.Item>
+            <ListGroup.Item>
               Description:
               <p>{product.description}</p>
-            </li>
-          </ul>
+            </ListGroup.Item>
+          </ListGroup>
         </Col>
         <Col md={3}>
-          <div className="card">
-            <ul className="list-group list-group-flush">
-              <li className="list-group-item">
-                Seller{' '}
-                <h2>
-                  <Link to={`/seller/${product.seller._id}`}>
-                    {product.seller.seller.name}
-                  </Link>
-                </h2>
-                <Rating
-                  rating={product.seller.seller.rating}
-                  numReviews={product.seller.seller.numReviews}
-                ></Rating>
-              </li>
-              <li className="list-group-item">
-                <div className="d-flex">
-                  <div className="me-auto">Price: </div>
-                  <div className="price"> ${product.price}</div>
-                </div>
-              </li>
-              <li className="list-group-item">
-                <div className="d-flex">
-                  <div className="me-auto">Status: </div>
-                  <div>
-                    {product.countInStock > 0 ? (
-                      <span className="success">In Stock</span>
-                    ) : (
-                      <span className="danger">Unavailable</span>
-                    )}
-                  </div>
-                </div>
-              </li>
-              {product.countInStock > 0 && (
-                <li className="list-group-item">
-                  <div className="d-grid">
-                    <button
-                      onClick={addToCartHandler}
-                      className="btn btn-primary"
-                    >
-                      Add to Cart
-                    </button>
-                  </div>
-                </li>
-              )}
-            </ul>
-          </div>
+          <Card>
+            <Card.Body>
+              <ListGroup variant="flush">
+                <ListGroup.Item>
+                  Seller{' '}
+                  <h2>
+                    <Link to={`/seller/${product.seller._id}`}>
+                      {product.seller.seller.name}
+                    </Link>
+                  </h2>
+                  <Rating
+                    rating={product.seller.seller.rating}
+                    numReviews={product.seller.seller.numReviews}
+                  ></Rating>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Pirce:</Col>
+                    <Col>${product.price}</Col>
+                  </Row>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <Row>
+                    <Col>Status:</Col>
+                    <Col>
+                      {product.countInStock > 0 ? (
+                        <span className="success">In Stock</span>
+                      ) : (
+                        <span className="danger">Unavailable</span>
+                      )}
+                    </Col>
+                  </Row>
+                </ListGroup.Item>
+
+                {product.countInStock > 0 && (
+                  <ListGroup.Item>
+                    <div className="d-grid">
+                      <Button onClick={addToCartHandler} variant="primary">
+                        Add to Cart
+                      </Button>
+                    </div>
+                  </ListGroup.Item>
+                )}
+              </ListGroup>
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
-      <div>
+      <div className="my-3">
         <h2 ref={reviewsRef}>Reviews</h2>
 
         <div className="mb-3">
@@ -209,28 +214,25 @@ export default function ProductScreen() {
             <MessageBox>There is no review</MessageBox>
           )}
         </div>
-        <ul className="list-group list-group-flush">
+        <ListGroup>
           {product.reviews.map((review) => (
-            <li className="list-group-item" key={review._id}>
+            <ListGroup.Item key={review._id}>
               <strong>{review.name}</strong>
               <Rating rating={review.rating} caption=" "></Rating>
               <p>{review.createdAt.substring(0, 10)}</p>
               <p>{review.comment}</p>
-            </li>
+            </ListGroup.Item>
           ))}
-        </ul>
-        <div className="mb-3">
+        </ListGroup>
+        <div className="my-3">
           {userInfo ? (
             <form onSubmit={submitHandler}>
               <h2>Write a customer review</h2>
 
-              <div className="mb-3">
-                <label htmlFor="rating" className="form-label">
-                  Rating
-                </label>
-                <select
-                  id="rating"
-                  className="form-control"
+              <Form.Group className="mb-3" controlId="rating">
+                <Form.Label>Rating</Form.Label>
+                <Form.Select
+                  aria-label="Rating"
                   value={rating}
                   onChange={(e) => setRating(e.target.value)}
                 >
@@ -240,28 +242,26 @@ export default function ProductScreen() {
                   <option value="3">3- Good</option>
                   <option value="4">4- Very good</option>
                   <option value="5">5- Excelent</option>
-                </select>
-              </div>
+                </Form.Select>
+              </Form.Group>
 
-              <div className="mb-3">
-                <label htmlFor="comment" className="form-label">
-                  Comment
-                </label>
-                <textarea
-                  id="comment"
-                  className="form-control"
+              <FloatingLabel
+                controlId="floatingTextarea"
+                label="Comments"
+                className="mb-3"
+              >
+                <Form.Control
+                  as="textarea"
+                  placeholder="Leave a comment here"
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                ></textarea>
-              </div>
+                />
+              </FloatingLabel>
+
               <div className="mb-3">
-                <button
-                  disabled={loadingCreateReview}
-                  type="submit"
-                  className="btn btn-primary"
-                >
+                <Button disabled={loadingCreateReview} type="submit">
                   Submit
-                </button>
+                </Button>
 
                 {loadingCreateReview && <LoadingBox></LoadingBox>}
               </div>

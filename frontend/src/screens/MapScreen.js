@@ -5,6 +5,7 @@ import {
   StandaloneSearchBox,
   Marker,
 } from '@react-google-maps/api';
+import Button from 'react-bootstrap/Button';
 import LoadingBox from '../components/LoadingBox';
 import Axios from 'axios';
 
@@ -113,9 +114,9 @@ export default function MapScreen() {
           >
             <div className="map-input-box">
               <input type="text" placeholder="Enter your address"></input>
-              <button type="button" className="primary" onClick={onConfirm}>
+              <Button type="button" onClick={onConfirm}>
                 Confirm
-              </button>
+              </Button>
             </div>
           </StandaloneSearchBox>
           <Marker position={location} onLoad={onMarkerLoad}></Marker>

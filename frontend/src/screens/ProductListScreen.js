@@ -1,6 +1,7 @@
 import Axios from 'axios';
 import React, { useContext, useEffect, useReducer } from 'react';
 import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -148,13 +149,9 @@ export default function ProductListScreen() {
         </Col>
         <Col className="col text-end">
           <div>
-            <button
-              type="button"
-              className=" btn btn-primary"
-              onClick={createHandler}
-            >
+            <Button type="button" onClick={createHandler}>
               Create Product
-            </button>
+            </Button>
           </div>
         </Col>
       </Row>
@@ -188,20 +185,20 @@ export default function ProductListScreen() {
                   <td>{product.category}</td>
                   <td>{product.brand}</td>
                   <td>
-                    <button
+                    <Button
                       type="button"
-                      className="btn btn-light"
+                      variant="light"
                       onClick={() => navigate(`/product/${product._id}/edit`)}
                     >
                       Edit
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
-                      className="btn btn-light"
+                      variant="light"
                       onClick={() => deleteHandler(product)}
                     >
                       Delete
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}

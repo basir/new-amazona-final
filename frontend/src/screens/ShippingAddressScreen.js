@@ -3,6 +3,8 @@ import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import CheckoutSteps from '../components/CheckoutSteps';
 import { Store } from '../Store';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 
 export default function ShippingAddressScreen() {
   const navigate = useNavigate();
@@ -94,94 +96,62 @@ export default function ShippingAddressScreen() {
         <h1 className="my-3">Shipping Address</h1>
 
         <form onSubmit={submitHandler}>
-          <div className="mb-3">
-            <label htmlFor="fullName" className="form-label">
-              Full Name
-            </label>
-            <input
-              type="text"
-              id="fullName"
-              placeholder="Enter full name"
-              className="form-control"
+          <Form.Group className="mb-3" controlId="fullName">
+            <Form.Label>Full Name</Form.Label>
+            <Form.Control
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
-            ></input>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="address" className="form-label">
-              Address
-            </label>
-            <input
-              type="text"
-              id="address"
-              placeholder="Enter Address"
-              className="form-control"
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="address">
+            <Form.Label>Address</Form.Label>
+            <Form.Control
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               required
-            ></input>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="city" className="form-label">
-              City
-            </label>
-            <input
-              type="text"
-              id="city"
-              placeholder="Enter City"
-              className="form-control"
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="city">
+            <Form.Label>City</Form.Label>
+            <Form.Control
               value={city}
               onChange={(e) => setCity(e.target.value)}
               required
-            ></input>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="postalCode" className="form-label">
-              Postal Code
-            </label>
-            <input
-              type="text"
-              id="postalCode"
-              placeholder="Enter Postal Code"
-              className="form-control"
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="postalCode">
+            <Form.Label>Postal Code</Form.Label>
+            <Form.Control
               value={postalCode}
               onChange={(e) => setPostalCode(e.target.value)}
               required
-            ></input>
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="country" className="form-label">
-              Country
-            </label>
-            <input
-              type="text"
-              id="country"
-              placeholder="Enter Country"
-              className="form-control"
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="country">
+            <Form.Label>Country</Form.Label>
+            <Form.Control
               value={country}
               onChange={(e) => setCountry(e.target.value)}
               required
-            ></input>
-          </div>
+            />
+          </Form.Group>
 
           <div className="mb-3">
-            <button
+            <Button
               id="chooseOnMap"
               type="button"
-              className="btn btn-light"
+              variant="light"
               onClick={chooseOnMap}
             >
               Choose Location On Map
-            </button>
+            </Button>
           </div>
 
           <div className="mb-3">
-            <label />
-            <button className="btn btn-primary" type="submit">
+            <Button variant="primary" type="submit">
               Continue
-            </button>
+            </Button>
           </div>
         </form>
       </div>

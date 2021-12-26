@@ -1,6 +1,7 @@
 import Axios from 'axios';
 import React, { useEffect, useReducer } from 'react';
 import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import { useParams } from 'react-router-dom';
 import LoadingBox from '../components/LoadingBox';
@@ -64,30 +65,27 @@ export default function SellerScreen() {
   ) : (
     <Row>
       <Col md={3}>
-        <div className="card">
-          <div className="card-body">
-            <div>
-              <img
-                className="img-small"
-                src={user.seller.logo}
-                alt={user.seller.name}
-              ></img>
-
+        <Card>
+          <Card.Body>
+            <img
+              className="img-small"
+              src={user.seller.logo}
+              alt={user.seller.name}
+            ></img>
+            <Card.Title>
+              {' '}
               <h1>{user.seller.name}</h1>
-            </div>
-
-            <div>
-              <Rating
-                rating={user.seller.rating}
-                numReviews={user.seller.numReviews}
-              ></Rating>
-            </div>
+            </Card.Title>
+            <Rating
+              rating={user.seller.rating}
+              numReviews={user.seller.numReviews}
+            ></Rating>
             <div>
               <a href={`mailto:${user.email}`}>Contact Seller</a>
             </div>
             <div>{user.seller.description}</div>
-          </div>
-        </div>
+          </Card.Body>
+        </Card>
       </Col>
       <Col md={9}>
         {products.length === 0 && <MessageBox>No Product Found</MessageBox>}

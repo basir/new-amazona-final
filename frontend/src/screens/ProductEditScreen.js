@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useReducer, useState } from 'react';
-
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import Axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import LoadingBox from '../components/LoadingBox';
@@ -49,6 +50,7 @@ export default function ProductEditScreen() {
   const { id: productId } = params;
 
   const [name, setName] = useState('');
+  const [slug, setSlug] = useState('');
   const [price, setPrice] = useState('');
   const [image, setImage] = useState('');
   const [category, setCategory] = useState('');
@@ -62,6 +64,7 @@ export default function ProductEditScreen() {
       try {
         const { data } = await Axios.get(`/api/products/${productId}`);
         setName(data.name);
+        setSlug(data.slug);
         setPrice(data.price);
         setImage(data.image);
         setCategory(data.category);
@@ -88,6 +91,7 @@ export default function ProductEditScreen() {
         {
           _id: productId,
           name,
+          slug,
           price,
           image,
           category,
@@ -142,124 +146,80 @@ export default function ProductEditScreen() {
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
         <form onSubmit={submitHandler}>
-          <div className="mb-3">
-            <label htmlFor="name" className="form-label">
-              Name
-            </label>
-            <input
-              id="name"
-              type="text"
-              placeholder="Enter name"
+          <Form.Group className="mb-3" controlId="name">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="form-control"
-            ></input>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="price" className="form-label">
-              Price
-            </label>
-            <input
-              id="price"
-              type="text"
-              placeholder="Enter price"
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="slug">
+            <Form.Label>Slug</Form.Label>
+            <Form.Control
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="name">
+            <Form.Label>Price</Form.Label>
+            <Form.Control
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              className="form-control"
-            ></input>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="image" className="form-label">
-              Image
-            </label>
-            <input
-              id="image"
-              type="text"
-              placeholder="Enter image"
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="image">
+            <Form.Label>Image File</Form.Label>
+            <Form.Control
               value={image}
               onChange={(e) => setImage(e.target.value)}
-              className="form-control"
-            ></input>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="imageFile" className="form-label">
-              Image File
-            </label>
-            <input
-              id="imageFile"
-              type="file"
-              placeholder="Choose Image"
-              onChange={uploadFileHandler}
-              className="form-control"
-            ></input>
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="imageFile">
+            <Form.Label>Upload File</Form.Label>
+            <Form.Control type="file" onChange={uploadFileHandler} />
             {loadingUpload && <LoadingBox></LoadingBox>}
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="category" className="form-label">
-              Category
-            </label>
-            <input
-              id="category"
-              type="text"
-              placeholder="Enter category"
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="category">
+            <Form.Label>Category</Form.Label>
+            <Form.Control
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="form-control"
-            ></input>
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="brand" className="form-label">
-              Brand
-            </label>
-            <input
-              id="brand"
-              type="text"
-              placeholder="Enter brand"
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="brand">
+            <Form.Label>Brand</Form.Label>
+            <Form.Control
               value={brand}
               onChange={(e) => setBrand(e.target.value)}
-              className="form-control"
-            ></input>
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="countInStock" className="form-label">
-              Count In Stock
-            </label>
-            <input
-              id="countInStock"
-              type="text"
-              placeholder="Enter countInStock"
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="countInStock">
+            <Form.Label>Count In Stock</Form.Label>
+            <Form.Control
               value={countInStock}
               onChange={(e) => setCountInStock(e.target.value)}
-              className="form-control"
-            ></input>
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="description" className="form-label">
-              Description
-            </label>
-            <textarea
-              id="description"
-              type="text"
-              placeholder="Enter description"
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="description">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="form-control"
-            ></textarea>
-          </div>
+              required
+            />
+          </Form.Group>
 
-          <div>
-            <label></label>
-            <button
-              disabled={loadingUpdate}
-              className="btn btn-primary"
-              type="submit"
-            >
+          <div className="mb-3">
+            <Button disabled={loadingUpdate} type="submit">
               Update
-            </button>
+            </Button>
             {loadingUpdate && <LoadingBox></LoadingBox>}
           </div>
         </form>

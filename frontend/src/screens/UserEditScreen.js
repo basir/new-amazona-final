@@ -1,6 +1,8 @@
 import Axios from 'axios';
 import React, { useState, useEffect, useReducer, useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
@@ -101,67 +103,53 @@ export default function UserEditScreen(props) {
         <MessageBox variant="danger">{error}</MessageBox>
       ) : (
         <form onSubmit={submitHandler}>
-          <div className="mb-3">
-            <label htmlFor="name" className="form-label">
-              Name
-            </label>
-            <input
-              id="name"
-              type="text"
-              placeholder="Enter name"
+          <Form.Group className="mb-3" controlId="name">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="form-control"
-            ></input>
-          </div>
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              Email
-            </label>
-            <input
-              id="email"
-              type="text"
-              placeholder="Enter email"
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="name">
+            <Form.Label>Email</Form.Label>
+            <Form.Control
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="form-control"
-            ></input>
-          </div>
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="name">
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </Form.Group>
 
-          <div className="form-check mb-3">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="isAdmin"
-              checked={isAdmin}
-              onChange={(e) => setIsAdmin(e.target.checked)}
-            />
-            <label className="form-check-label" htmlFor="isAdmin">
-              Is Admin
-            </label>
-          </div>
-          <div className="form-check mb-3">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="isSeller"
-              checked={isSeller}
-              onChange={(e) => setIsSeller(e.target.checked)}
-            />
-            <label className="form-check-label" htmlFor="isSeller">
-              Is Seller
-            </label>
-          </div>
+          <Form.Check
+            className="mb-3"
+            type="checkbox"
+            id="isAdmin"
+            label="isAdmin"
+            checked={isAdmin}
+            onChange={(e) => setIsAdmin(e.target.checked)}
+          />
+
+          <Form.Check
+            className="mb-3"
+            type="checkbox"
+            id="isSeller"
+            label="isSeller"
+            checked={isSeller}
+            onChange={(e) => setIsSeller(e.target.checked)}
+          />
 
           <div className="mb-3">
-            <label />
-            <button
-              className="btn btn-primary"
-              type="submit"
-              disabled={loadingUpdate}
-            >
+            <Button type="submit" disabled={loadingUpdate}>
               Update
-            </button>
+            </Button>
           </div>
           {loadingUpdate && <LoadingBox></LoadingBox>}
         </form>

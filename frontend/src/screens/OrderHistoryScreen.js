@@ -6,6 +6,7 @@ import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { Store } from '../Store';
 import { getError } from '../utils';
+import Button from 'react-bootstrap/Button';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -84,15 +85,15 @@ export default function OrderHistoryScreen() {
                     : 'No'}
                 </td>
                 <td>
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-light"
+                    variant="light"
                     onClick={() => {
                       navigate(`/order/${order._id}`);
                     }}
                   >
                     Details
-                  </button>
+                  </Button>
                 </td>
               </tr>
             ))}

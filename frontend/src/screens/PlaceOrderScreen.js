@@ -1,13 +1,15 @@
 import Axios from 'axios';
 import React, { useContext, useReducer } from 'react';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import CheckoutSteps from '../components/CheckoutSteps';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { Store } from '../store';
+import { Store } from '../Store';
 import { getError } from '../utils';
+import Helmet from 'react-helmet';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -85,10 +87,12 @@ export default function PlaceOrderScreen(props) {
   return (
     <div>
       <CheckoutSteps step1 step2 step3 step4></CheckoutSteps>
-
+      <Helmet>
+        <title>Preview Order</title>
+      </Helmet>
       <h1 className="my-3">Preview Order</h1>
       <Row>
-        <div className="col-md-8">
+        <Col md={8}>
           <div className="mb-3 card card-body">
             <h2>Shipping</h2>
             <p>
@@ -113,56 +117,56 @@ export default function PlaceOrderScreen(props) {
             <ul className="list-group list-group-flush">
               {cart.cartItems.map((item) => (
                 <li className="list-group-item" key={item._id}>
-                  <div className="row align-items-center">
-                    <div className="col-md-6">
+                  <Row className="align-items-center">
+                    <Col md={6}>
                       <img
                         src={item.image}
                         alt={item.name}
                         className="img-fluid rounded img-thumbnail"
                       ></img>{' '}
                       <Link to={`/product/${item.product}`}>{item.name}</Link>
-                    </div>
-                    <div className="col-md-3">
+                    </Col>
+                    <Col md={3}>
                       <span>{item.quantity}</span>
-                    </div>
-                    <div className="col-md-3">${item.price}</div>
-                  </div>
+                    </Col>
+                    <Col md={3}>${item.price}</Col>
+                  </Row>
                 </li>
               ))}
             </ul>
             <Link to="/cart">Edit</Link>
           </div>
-        </div>
-        <div className="col-md-4">
+        </Col>
+        <Col md={4}>
           <div className="card card-body">
             <h2>Order Summary</h2>
             <ul className="list-group list-group-flush">
               <li className="list-group-item">
                 <Row>
-                  <div className="col">Items</div>
-                  <div className="col">${cart.itemsPrice.toFixed(2)}</div>
+                  <Col>Items</Col>
+                  <Col>${cart.itemsPrice.toFixed(2)}</Col>
                 </Row>
               </li>
               <li className="list-group-item">
                 <Row>
-                  <div className="col">Shipping</div>
-                  <div className="col">${cart.shippingPrice.toFixed(2)}</div>
+                  <Col>Shipping</Col>
+                  <Col>${cart.shippingPrice.toFixed(2)}</Col>
                 </Row>
               </li>
               <li className="list-group-item">
                 <Row>
-                  <div className="col">Tax</div>
-                  <div className="col">${cart.taxPrice.toFixed(2)}</div>
+                  <Col>Tax</Col>
+                  <Col>${cart.taxPrice.toFixed(2)}</Col>
                 </Row>
               </li>
               <li className="list-group-item">
                 <Row>
-                  <div className="col">
+                  <Col>
                     <strong> Order Total</strong>
-                  </div>
-                  <div className="col">
+                  </Col>
+                  <Col>
                     <strong>${cart.totalPrice.toFixed(2)}</strong>
-                  </div>
+                  </Col>
                 </Row>
               </li>
 
@@ -183,7 +187,7 @@ export default function PlaceOrderScreen(props) {
               </li>
             </ul>
           </div>
-        </div>
+        </Col>
       </Row>
     </div>
   );

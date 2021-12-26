@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import socketIOClient from 'socket.io-client';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import MessageBox from '../components/MessageBox';
-import { Store } from '../store';
+import { Store } from '../Store';
+import Helmet from 'react-helmet';
 
 let allUsers = [];
 let allMessages = [];
@@ -113,8 +115,11 @@ export default function SupportScreen() {
   };
 
   return (
-    <div className="row top full-container">
-      <div className="col-1 support-users">
+    <Row className="top full-container">
+      <Helmet>
+        <title>Support</title>
+      </Helmet>
+      <Col md={3} className="support-users">
         {users.filter((x) => x._id !== userInfo._id).length === 0 && (
           <MessageBox>No Online User Found</MessageBox>
         )}
@@ -141,8 +146,8 @@ export default function SupportScreen() {
               </li>
             ))}
         </ul>
-      </div>
-      <div className="col-3 support-messages">
+      </Col>
+      <Col md={9} className="support-messages">
         {!selectedUser._id ? (
           <MessageBox>Select a user to start chat</MessageBox>
         ) : (
@@ -171,7 +176,7 @@ export default function SupportScreen() {
             </div>
           </div>
         )}
-      </div>
-    </div>
+      </Col>
+    </Row>
   );
 }

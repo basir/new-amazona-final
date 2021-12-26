@@ -7,7 +7,7 @@ import * as serviceWorker from './serviceWorker';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
-import { StoreProvider } from './store';
+import { StoreProvider } from './Store';
 
 ReactDOM.render(
   <StoreProvider>

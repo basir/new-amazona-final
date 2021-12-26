@@ -68,16 +68,33 @@ userRouter.post(
 );
 
 userRouter.get(
-  '/:id',
+  '/sellers/:id',
   expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
-    if (user) {
-      res.send(user);
+    if (user && user.isSeller) {
+      res.send({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        seller: user.seller,
+      });
     } else {
-      res.status(404).send({ message: 'User Not Found' });
+      res.status(404).send({ message: 'Seller Not Found' });
     }
   })
 );
+
+// userRouter.get(
+//   '/:id',
+//   expressAsyncHandler(async (req, res) => {
+//     const user = await User.findById(req.params.id);
+//     if (user) {
+//       res.send(user);
+//     } else {
+//       res.status(404).send({ message: 'User Not Found' });
+//     }
+//   })
+// );
 userRouter.put(
   '/profile',
   isAuth,

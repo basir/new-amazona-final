@@ -17,6 +17,16 @@ productRouter.get(
     res.send(products);
   })
 );
+productRouter.get(
+  '/sellers/:id',
+  expressAsyncHandler(async ({ params }, res) => {
+    const products = await Product.find({ seller: params.id }).populate(
+      'seller',
+      'seller.name seller.logo'
+    );
+    res.send(products);
+  })
+);
 
 const PAGE_SIZE = 3;
 productRouter.get(

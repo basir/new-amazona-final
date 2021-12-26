@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import socketIOClient from 'socket.io-client';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
 
 const ENDPOINT =
   window.location.host.indexOf('localhost') >= 0
@@ -66,36 +69,43 @@ export default function ChatBox(props) {
   return (
     <div className="chatbox">
       {!isOpen ? (
-        <button type="button" onClick={supportHandler}>
+        <Button type="button" onClick={supportHandler}>
           <i className="fa fa-support" />
-        </button>
+        </Button>
       ) : (
-        <div className="card card-body">
-          <Row>
-            <strong>Support </strong>
-            <button type="button" onClick={closeHandler}>
-              <i className="fa fa-close" />
-            </button>
-          </Row>
-          <ul ref={uiMessagesRef}>
-            {messages.map((msg, index) => (
-              <li key={index}>
-                <strong>{`${msg.name}: `}</strong> {msg.body}
-              </li>
-            ))}
-          </ul>
-          <div>
-            <form onSubmit={submitHandler} className="row">
-              <input
-                value={messageBody}
-                onChange={(e) => setMessageBody(e.target.value)}
-                type="text"
-                placeholder="type message"
-              />
-              <button type="submit">Send</button>
-            </form>
-          </div>
-        </div>
+        <Card>
+          <Card.Body>
+            <Row>
+              <Col>
+                <strong>Support </strong>
+              </Col>
+              <Col>
+                {' '}
+                <Button type="button" onClick={closeHandler}>
+                  <i className="fa fa-close" />
+                </Button>
+              </Col>
+            </Row>
+            <ul ref={uiMessagesRef}>
+              {messages.map((msg, index) => (
+                <li key={index}>
+                  <strong>{`${msg.name}: `}</strong> {msg.body}
+                </li>
+              ))}
+            </ul>
+            <div>
+              <form onSubmit={submitHandler} className="row">
+                <input
+                  value={messageBody}
+                  onChange={(e) => setMessageBody(e.target.value)}
+                  type="text"
+                  placeholder="type message"
+                />
+                <button type="submit">Send</button>
+              </form>
+            </div>
+          </Card.Body>
+        </Card>
       )}
     </div>
   );

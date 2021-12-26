@@ -3,11 +3,13 @@ import React, { useEffect, useReducer, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import Product from '../components/Product';
 import Rating from '../components/Rating';
 import { getError, prices, ratings } from '../utils';
+import Helmet from 'react-helmet';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -90,8 +92,11 @@ export default function SearchScreen() {
 
   return (
     <div>
+      <Helmet>
+        <title>Search Products</title>
+      </Helmet>
       <Row>
-        <div className="col-md-3">
+        <Col md={3}>
           <h3>Department</h3>
           <div>
             <ul>
@@ -162,16 +167,16 @@ export default function SearchScreen() {
               </li>
             </ul>
           </div>
-        </div>
-        <div className="col-md-9">
+        </Col>
+        <Col md={9}>
           {loading ? (
             <LoadingBox></LoadingBox>
           ) : error ? (
             <MessageBox variant="danger">{error}</MessageBox>
           ) : (
             <>
-              <div className="row justify-content-between mb-3">
-                <div className="col-md-6">
+              <Row className="justify-content-between mb-3">
+                <Col md={6}>
                   {loading ? (
                     <LoadingBox></LoadingBox>
                   ) : error ? (
@@ -196,8 +201,8 @@ export default function SearchScreen() {
                       ) : null}
                     </div>
                   )}
-                </div>
-                <div className="col-md-6 text-end">
+                </Col>
+                <Col className="text-end">
                   Sort by{' '}
                   <select
                     value={order}
@@ -210,8 +215,8 @@ export default function SearchScreen() {
                     <option value="highest">Price: High to Low</option>
                     <option value="toprated">Avg. Customer Reviews</option>
                   </select>
-                </div>
-              </div>
+                </Col>
+              </Row>
 
               {products.length === 0 && (
                 <MessageBox>No Product Found</MessageBox>
@@ -219,12 +224,9 @@ export default function SearchScreen() {
 
               <Row>
                 {products.map((product) => (
-                  <div
-                    key={product._id}
-                    className="col-sm-6 col-md-4 col-lg-4 mb-3"
-                  >
+                  <Col sm={6} lg={4} className="mb-3" key={product._id}>
                     <Product product={product}></Product>
-                  </div>
+                  </Col>
                 ))}
               </Row>
 
@@ -241,7 +243,7 @@ export default function SearchScreen() {
               </div>
             </>
           )}
-        </div>
+        </Col>
       </Row>
     </div>
   );

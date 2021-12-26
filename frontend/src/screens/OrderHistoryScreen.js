@@ -1,9 +1,10 @@
 import Axios from 'axios';
 import React, { useContext, useEffect, useReducer } from 'react';
+import Helmet from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { Store } from '../store';
+import { Store } from '../Store';
 import { getError } from '../utils';
 
 const reducer = (state, action) => {
@@ -46,10 +47,13 @@ export default function OrderHistoryScreen() {
       }
     };
     fetchData();
-  }, []);
+  }, [userInfo]);
 
   return (
     <div>
+      <Helmet>
+        <title>Order History</title>
+      </Helmet>
       <h1>Order History</h1>
       {loading ? (
         <LoadingBox></LoadingBox>

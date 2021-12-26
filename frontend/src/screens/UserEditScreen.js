@@ -1,10 +1,11 @@
 import Axios from 'axios';
 import React, { useState, useEffect, useReducer, useContext } from 'react';
+import Helmet from 'react-helmet';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { Store } from '../store';
+import { Store } from '../Store';
 import { getError } from '../utils';
 
 const reducer = (state, action) => {
@@ -90,6 +91,9 @@ export default function UserEditScreen(props) {
 
   return (
     <div className="container small-container">
+      <Helmet>
+        <title>Edit User {userId}</title>
+      </Helmet>
       <h1 className="my-3">Edit User {userId}</h1>
       {loading ? (
         <LoadingBox></LoadingBox>

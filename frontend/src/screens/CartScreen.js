@@ -2,8 +2,14 @@ import Axios from 'axios';
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import MessageBox from '../components/MessageBox';
-import { Store } from '../store';
+import { Store } from '../Store';
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
+import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import { Helmet } from 'react-helmet';
+
 export default function CartScreen(props) {
   const navigate = useNavigate();
 
@@ -28,9 +34,13 @@ export default function CartScreen(props) {
   };
   return (
     <div>
+      <Helmet>
+        <title>Shopping Cart</title>
+      </Helmet>
       <h1>Shopping Cart</h1>
+
       <Row>
-        <div className="col-md-8">
+        <Col md={8}>
           {cartItems.length === 0 ? (
             <MessageBox>
               Cart is empty. <Link to="/">Go Shopping</Link>
@@ -39,77 +49,79 @@ export default function CartScreen(props) {
             <ul className="list-group list-group-flush">
               {cartItems.map((item) => (
                 <li className="list-group-item" key={item._id}>
-                  <div className="row align-items-center">
-                    <div className="col-md-4">
+                  <Row className="align-items-center">
+                    <Col md={4}>
                       <img
                         src={item.image}
                         alt={item.name}
                         className="img-fluid rounded img-thumbnail"
                       ></img>{' '}
                       <Link to={`/product/${item.product}`}>{item.name}</Link>
-                    </div>
-                    <div className="col-md-3">
-                      <button
+                    </Col>
+                    <Col md={3}>
+                      <Button
+                        variant="light"
                         onClick={() =>
                           updateCartHandler(item, item.quantity - 1)
                         }
                         disabled={item.quantity === 1}
-                        className="btn"
                       >
                         <i className="fas fa-minus-circle"></i>
-                      </button>{' '}
+                      </Button>{' '}
                       <span>{item.quantity}</span>{' '}
-                      <button
+                      <Button
+                        variant="light"
                         disabled={item.quantity === item.countInStock}
-                        className="btn"
                         onClick={() =>
                           updateCartHandler(item, item.quantity + 1)
                         }
                       >
                         <i className="fas fa-plus-circle"></i>
-                      </button>
-                    </div>
-                    <div className="col-md-3">${item.price}</div>
-                    <div className="col-md-2">
-                      <button
+                      </Button>
+                    </Col>
+                    <Col md={3}>${item.price}</Col>
+                    <Col md={2}>
+                      <Button
                         type="button"
-                        className="btn btn-light"
+                        variant="light"
                         onClick={() => removeItemHandler(item)}
                       >
                         <i className="fas fa-trash"></i>
-                      </button>
-                    </div>
-                  </div>
+                      </Button>
+                    </Col>
+                  </Row>
                 </li>
               ))}
             </ul>
           )}
-        </div>
-        <div className="col-md-4">
-          <div className="card card-body">
-            <ul className="list-group list-group-flush">
-              <li className="list-group-item">
-                <h3>
-                  Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}{' '}
-                  items) : $
-                  {cartItems.reduce((a, c) => a + c.price * c.quantity, 0)}
-                </h3>
-              </li>
-              <li className="list-group-item">
-                <div className="d-grid">
-                  <button
-                    type="button"
-                    onClick={checkoutHandler}
-                    className="btn btn-primary"
-                    disabled={cartItems.length === 0}
-                  >
-                    Proceed to Checkout
-                  </button>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
+        </Col>
+        <Col md={4}>
+          <Card>
+            <Card.Body>
+              <ListGroup variant="flush">
+                <ListGroup.Item>
+                  <h3>
+                    Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}{' '}
+                    items) : $
+                    {cartItems.reduce((a, c) => a + c.price * c.quantity, 0)}
+                  </h3>
+                </ListGroup.Item>
+                <ListGroup.Item>
+                  <div className="d-grid">
+                    <Button
+                      type="button"
+                      onClick={checkoutHandler}
+                      variant="primary"
+                      disabled={cartItems.length === 0}
+                    >
+                      Proceed to Checkout
+                    </Button>
+                  </div>
+                </ListGroup.Item>
+              </ListGroup>
+            </Card.Body>
+          </Card>
+        </Col>
       </Row>
     </div>
   );

@@ -1,10 +1,11 @@
 import Axios from 'axios';
 import React, { useContext, useEffect, useReducer } from 'react';
+import Helmet from 'react-helmet';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { Store } from '../store';
+import { Store } from '../Store';
 import { getError } from '../utils';
 
 const reducer = (state, action) => {
@@ -98,6 +99,9 @@ export default function OrderListScreen() {
 
   return (
     <div>
+      <Helmet>
+        <title>Orders</title>
+      </Helmet>
       <h1>Orders</h1>
       {loadingDelete && <LoadingBox></LoadingBox>}
       {loading ? (

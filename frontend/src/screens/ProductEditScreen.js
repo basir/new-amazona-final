@@ -6,7 +6,8 @@ import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { getError } from '../utils';
 import { toast } from 'react-toastify';
-import { Store } from '../store';
+import { Store } from '../Store';
+import Helmet from 'react-helmet';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -131,6 +132,9 @@ export default function ProductEditScreen() {
 
   return (
     <div className="container small-container">
+      <Helmet>
+        <title>Edit Product {productId}</title>
+      </Helmet>
       <h1>Edit Product {productId}</h1>
       {loading ? (
         <LoadingBox></LoadingBox>

@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
+import Helmet from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
-import { saveShippingAddress } from '../actions/cartActions';
 import CheckoutSteps from '../components/CheckoutSteps';
-import { Store } from '../store';
+import { Store } from '../Store';
 
 export default function ShippingAddressScreen() {
   const navigate = useNavigate();
@@ -71,23 +71,26 @@ export default function ShippingAddressScreen() {
     }
   };
   const chooseOnMap = () => {
-    ctxDispatch(
-      saveShippingAddress({
-        fullName,
-        address,
-        city,
-        postalCode,
-        country,
-        lat,
-        lng,
-      })
-    );
+    // ctxDispatch(
+    //   saveShippingAddress({
+    //     fullName,
+    //     address,
+    //     city,
+    //     postalCode,
+    //     country,
+    //     lat,
+    //     lng,
+    //   })
+    // );
     navigate('/map');
   };
   return (
     <div>
       <CheckoutSteps step1 step2></CheckoutSteps>
       <div className="container small-container">
+        <Helmet>
+          <title>Shipping Address</title>
+        </Helmet>
         <h1 className="my-3">Shipping Address</h1>
 
         <form onSubmit={submitHandler}>

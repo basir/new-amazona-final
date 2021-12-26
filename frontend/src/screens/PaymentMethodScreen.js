@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react';
+import Helmet from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import CheckoutSteps from '../components/CheckoutSteps';
-import { Store } from '../store';
+import { Store } from '../Store';
 
 export default function PaymentMethodScreen(props) {
   const navigate = useNavigate();
@@ -28,6 +29,9 @@ export default function PaymentMethodScreen(props) {
     <div>
       <CheckoutSteps step1 step2></CheckoutSteps>
       <div className="container small-container">
+        <Helmet>
+          <title>Payment Method</title>
+        </Helmet>
         <h1 className="my-3">Payment Method</h1>
         <form onSubmit={submitHandler}>
           <div className="form-check mb-3">

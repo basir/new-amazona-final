@@ -1,9 +1,10 @@
 import Axios from 'axios';
 import React, { useContext, useEffect, useReducer, useState } from 'react';
+import Helmet from 'react-helmet';
 import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { Store } from '../store';
+import { Store } from '../Store';
 import { getError } from '../utils';
 
 const reducer = (state, action) => {
@@ -107,6 +108,9 @@ export default function ProfileScreen() {
 
   return (
     <div className="container small-container">
+      <Helmet>
+        <title>User Profile</title>
+      </Helmet>
       <h1 className="my-3">User Profile</h1>
       {loading ? (
         <LoadingBox></LoadingBox>

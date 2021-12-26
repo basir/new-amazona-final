@@ -7,10 +7,9 @@ import {
 } from '@react-google-maps/api';
 import LoadingBox from '../components/LoadingBox';
 import Axios from 'axios';
-import { USER_ADDRESS_MAP_CONFIRM } from '../constants/userConstants';
 
 import { useNavigate } from 'react-router-dom';
-import { Store } from '../store';
+import { Store } from '../Store';
 
 const libs = ['places'];
 const defaultLocation = { lat: 45.516, lng: -73.56 };
@@ -62,17 +61,17 @@ export default function MapScreen() {
     const places = placeRef.current.getPlaces();
     if (places && places.length === 1) {
       // dispatch select action
-      ctxDispatch({
-        type: USER_ADDRESS_MAP_CONFIRM,
-        payload: {
-          lat: location.lat,
-          lng: location.lng,
-          address: places[0].formatted_address,
-          name: places[0].name,
-          vicinity: places[0].vicinity,
-          googleAddressId: places[0].id,
-        },
-      });
+      // ctxDispatch({
+      //   type: USER_ADDRESS_MAP_CONFIRM,
+      //   payload: {
+      //     lat: location.lat,
+      //     lng: location.lng,
+      //     address: places[0].formatted_address,
+      //     name: places[0].name,
+      //     vicinity: places[0].vicinity,
+      //     googleAddressId: places[0].id,
+      //   },
+      // });
       alert('location selected successfully.');
       navigate('/shipping');
     } else {

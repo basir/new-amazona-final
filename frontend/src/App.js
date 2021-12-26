@@ -34,9 +34,10 @@ import SupportScreen from './screens/SupportScreen';
 import ChatBox from './components/ChatBox';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Store } from './store';
+import { Store } from './Store';
 import { getError } from './utils';
 import Axios from 'axios';
+import Helmet from 'react-helmet';
 
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -75,6 +76,9 @@ function App() {
             : 'site-container d-flex flex-column'
         }
       >
+        <Helmet>
+          <title>Amazona: ECommerce website by MERN</title>
+        </Helmet>
         <ToastContainer position="bottom-center" limit={1} />
         <header>
           <Navbar bg="dark" variant="dark" expand="lg">
@@ -125,29 +129,28 @@ function App() {
                   )}
                   {userInfo && userInfo.isSeller && (
                     <NavDropdown title="Seller" id="basic-nav-dropdown">
-                      <Link className="dropdown-item" to="/productlist/seller">
-                        Products
-                      </Link>
-
-                      <Link className="dropdown-item" to="/orderlist/seller">
-                        Orders
-                      </Link>
+                      <LinkContainer to="/productlist/seller">
+                        <NavDropdown.Item>Products</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to="/orderlist/seller">
+                        <NavDropdown.Item>Orders</NavDropdown.Item>
+                      </LinkContainer>
                     </NavDropdown>
                   )}
                   {userInfo && userInfo.isAdmin && (
                     <NavDropdown title="Admin" id="basic-nav-dropdown">
-                      <Link className="dropdown-item" to="/dashboard">
-                        Dashboard
-                      </Link>
-                      <Link className="dropdown-item" to="/productlist">
-                        Products
-                      </Link>
-                      <Link className="dropdown-item" to="/orderlist">
-                        Orders
-                      </Link>
-                      <Link className="dropdown-item" to="/userlist">
-                        Users
-                      </Link>
+                      <LinkContainer to="/dashboard">
+                        <NavDropdown.Item>Dashboard</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to="/productlist">
+                        <NavDropdown.Item>Products</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to="/orderlist">
+                        <NavDropdown.Item>Orders</NavDropdown.Item>
+                      </LinkContainer>
+                      <LinkContainer to="/userlist">
+                        <NavDropdown.Item>Users</NavDropdown.Item>
+                      </LinkContainer>
                     </NavDropdown>
                   )}
                 </Nav>

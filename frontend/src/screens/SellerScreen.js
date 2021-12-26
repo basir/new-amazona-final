@@ -1,74 +1,104 @@
-import React, { useEffect } from 'react';
+import Axios from 'axios';
+import React, { useEffect, useReducer } from 'react';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import { useParams } from 'react-router-dom';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import Product from '../components/Product';
 import Rating from '../components/Rating';
+import { getError } from '../utils';
 
-export default function SellerScreen(props) {
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true };
+    case 'FETCH_SUCCESS':
+      return {
+        ...state,
+        user: action.payload.user,
+        products: action.payload.products,
+        loading: false,
+      };
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export default function SellerScreen() {
+  const [{ loading, error, products, user }, dispatch] = useReducer(reducer, {
+    loading: true,
+    error: '',
+  });
+
   const params = useParams();
   const { id: sellerId } = params;
 
-  // useEffect(() => {
-  //   dispatch(detailsUser(sellerId));
-  //   dispatch(listProducts({ seller: sellerId }));
-  // }, [dispatch, sellerId]);
-  return <div>Under const</div>;
+  useEffect(() => {
+    const fetchData = async () => {
+      dispatch({ type: 'FETCH_REQUEST' });
+      try {
+        const { data: user } = await Axios.get(
+          `/api/users/sellers/${sellerId}`
+        );
+        const { data: products } = await Axios.get(
+          `/api/products/sellers/${sellerId}`
+        );
+        dispatch({ type: 'FETCH_SUCCESS', payload: { user, products } });
+      } catch (error) {
+        dispatch({
+          type: 'FETCH_FAIL',
+          payload: getError(error),
+        });
+      }
+    };
+    fetchData();
+  }, [dispatch, sellerId]);
 
-  //   <Row>
-  //     <div className="col-md-3">
-  //       {loading ? (
-  //         <LoadingBox></LoadingBox>
-  //       ) : error ? (
-  //         <MessageBox variant="danger">{error}</MessageBox>
-  //       ) : (
-  //         <div className="card">
-  //           <div className="card-body">
-  //             <div>
-  //               <img
-  //                 className="img-small"
-  //                 src={user.seller.logo}
-  //                 alt={user.seller.name}
-  //               ></img>
+  return loading ? (
+    <LoadingBox></LoadingBox>
+  ) : error ? (
+    <MessageBox variant="danger">{error}</MessageBox>
+  ) : (
+    <Row>
+      <Col md={3}>
+        <div className="card">
+          <div className="card-body">
+            <div>
+              <img
+                className="img-small"
+                src={user.seller.logo}
+                alt={user.seller.name}
+              ></img>
 
-  //               <h1>{user.seller.name}</h1>
-  //             </div>
+              <h1>{user.seller.name}</h1>
+            </div>
 
-  //             <div>
-  //               <Rating
-  //                 rating={user.seller.rating}
-  //                 numReviews={user.seller.numReviews}
-  //               ></Rating>
-  //             </div>
-  //             <div>
-  //               <a href={`mailto:${user.email}`}>Contact Seller</a>
-  //             </div>
-  //             <div>{user.seller.description}</div>
-  //           </div>
-  //         </div>
-  //       )}
-  //     </div>
-  //     <div className="col-md-9">
-  //       {loadingProducts ? (
-  //         <LoadingBox></LoadingBox>
-  //       ) : errorProducts ? (
-  //         <MessageBox variant="danger">{errorProducts}</MessageBox>
-  //       ) : (
-  //         <>
-  //           {products.length === 0 && <MessageBox>No Product Found</MessageBox>}
-  //           <Row>
-  //             {products.map((product) => (
-  //               <div
-  //                 key={product._id}
-  //                 className="col-sm-6 col-md-4 col-lg-4 mb-3"
-  //               >
-  //                 <Product product={product}></Product>
-  //               </div>
-  //             ))}
-  //           </Row>
-  //         </>
-  //       )}
-  //     </div>
-  //   </Row>
-  // );
+            <div>
+              <Rating
+                rating={user.seller.rating}
+                numReviews={user.seller.numReviews}
+              ></Rating>
+            </div>
+            <div>
+              <a href={`mailto:${user.email}`}>Contact Seller</a>
+            </div>
+            <div>{user.seller.description}</div>
+          </div>
+        </div>
+      </Col>
+      <Col md={9}>
+        {products.length === 0 && <MessageBox>No Product Found</MessageBox>}
+        <Row>
+          {products.map((product) => (
+            <Col sm={6} lg={4} className="mb-3" key={product._id}>
+              <Product product={product}></Product>
+            </Col>
+          ))}
+        </Row>
+      </Col>
+    </Row>
+  );
 }

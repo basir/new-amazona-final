@@ -1,8 +1,9 @@
 import Axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
+import Helmet from 'react-helmet';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Store } from '../store';
+import { Store } from '../Store';
 import { getError } from '../utils';
 
 export default function SigninScreen() {
@@ -38,6 +39,9 @@ export default function SigninScreen() {
 
   return (
     <div className="container small-container">
+      <Helmet>
+        <title>Sign In</title>
+      </Helmet>
       <h1 className="my-3">Sign In</h1>
       <form onSubmit={submitHandler}>
         <div className="mb-3">

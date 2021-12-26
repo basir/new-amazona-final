@@ -9,7 +9,8 @@ import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { getError } from '../utils';
 import { toast } from 'react-toastify';
-import { Store } from '../store';
+import { Store } from '../Store';
+import Helmet from 'react-helmet';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -178,6 +179,9 @@ export default function OrderScreen() {
     <MessageBox variant="danger">{error}</MessageBox>
   ) : (
     <div>
+      <Helmet>
+        <title>Order {orderId}</title>
+      </Helmet>
       <h1 className="my-3">Order {orderId}</h1>
       <Row>
         <Col md={8}>
@@ -216,20 +220,20 @@ export default function OrderScreen() {
             <ul className="list-group list-group-flush">
               {order.orderItems.map((item) => (
                 <li className="list-group-item" key={item.product}>
-                  <div className="row align-items-center">
-                    <div className="col-md-6">
+                  <Row className="align-items-center">
+                    <Col md={6}>
                       <img
                         src={item.image}
                         alt={item.name}
                         className="img-fluid rounded img-thumbnail"
                       ></img>{' '}
                       <Link to={`/product/${item.product}`}>{item.name}</Link>
-                    </div>
-                    <div className="col-md-3">
+                    </Col>
+                    <Col md={3}>
                       <span>{item.quantity}</span>
-                    </div>
-                    <div className="col-md-3">${item.price}</div>
-                  </div>
+                    </Col>
+                    <Col md={3}>${item.price}</Col>
+                  </Row>
                 </li>
               ))}
             </ul>
@@ -241,30 +245,30 @@ export default function OrderScreen() {
             <ul className="list-group list-group-flush">
               <li className="list-group-item">
                 <Row>
-                  <div className="col">Items</div>
-                  <div className="col">${order.itemsPrice.toFixed(2)}</div>
+                  <Col>Items</Col>
+                  <Col>${order.itemsPrice.toFixed(2)}</Col>
                 </Row>
               </li>
               <li className="list-group-item">
                 <Row>
-                  <div className="col">Shipping</div>
-                  <div className="col">${order.shippingPrice.toFixed(2)}</div>
+                  <Col>Shipping</Col>
+                  <Col>${order.shippingPrice.toFixed(2)}</Col>
                 </Row>
               </li>
               <li className="list-group-item">
                 <Row>
-                  <div className="col">Tax</div>
-                  <div className="col">${order.taxPrice.toFixed(2)}</div>
+                  <Col>Tax</Col>
+                  <Col>${order.taxPrice.toFixed(2)}</Col>
                 </Row>
               </li>
               <li className="list-group-item">
                 <Row>
-                  <div className="col">
+                  <Col>
                     <strong> Order Total</strong>
-                  </div>
-                  <div className="col">
+                  </Col>
+                  <Col>
                     <strong>${order.totalPrice.toFixed(2)}</strong>
-                  </div>
+                  </Col>
                 </Row>
               </li>
 

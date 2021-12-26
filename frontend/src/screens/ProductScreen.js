@@ -7,13 +7,15 @@ import React, {
   useState,
 } from 'react';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import Rating from '../components/Rating';
-import { Store } from '../store';
+import { Store } from '../Store';
 import { getError } from '../utils';
+import Helmet from 'react-helmet';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -122,16 +124,19 @@ export default function ProductScreen() {
   ) : (
     <div>
       <Row>
-        <div className="col-md-6">
+        <Col md={6}>
           <img
             className="img-large"
             src={product.image}
             alt={product.name}
           ></img>
-        </div>
-        <div className="col-md-3">
+        </Col>
+        <Col md={3}>
           <ul className="list-group list-group-flush">
             <li className="list-group-item">
+              <Helmet>
+                <title>{product.name}</title>
+              </Helmet>
               <h1>{product.name}</h1>
             </li>
             <li className="list-group-item">
@@ -146,8 +151,8 @@ export default function ProductScreen() {
               <p>{product.description}</p>
             </li>
           </ul>
-        </div>
-        <div className="col-md-3">
+        </Col>
+        <Col md={3}>
           <div className="card">
             <ul className="list-group list-group-flush">
               <li className="list-group-item">
@@ -194,7 +199,7 @@ export default function ProductScreen() {
               )}
             </ul>
           </div>
-        </div>
+        </Col>
       </Row>
       <div>
         <h2 ref={reviewsRef}>Reviews</h2>

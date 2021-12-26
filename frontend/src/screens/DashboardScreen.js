@@ -1,11 +1,13 @@
 import React, { useContext, useEffect, useReducer } from 'react';
 import Chart from 'react-google-charts';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import Axios from 'axios';
 import { getError } from '../utils';
-import { Store } from '../store';
+import { Store } from '../Store';
+import Card from 'react-bootstrap/Card';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -62,49 +64,57 @@ export default function DashboardScreen() {
       ) : (
         <>
           <Row>
-            <div className="col-md-4">
-              <div className="card">
-                <div className="card-body">
-                  <h2 className="card-title"> {summary.users[0].numUsers}</h2>
-                  <span>
-                    <i className="fa fa-users" /> Users
-                  </span>
-                </div>
-              </div>
-            </div>
+            <Col md={4}>
+              <Card>
+                <Card.Body>
+                  <Card.Title>{summary.users[0].numUsers}</Card.Title>
+                  <Card.Text>
+                    <span>
+                      <i className="fa fa-users" /> Users
+                    </span>
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
 
-            <div className="col-md-4">
-              <div className="card">
-                <div className="card-body">
-                  <h2 className="card-title">
+            <Col md={4}>
+              <Card>
+                <Card.Body>
+                  <Card.Title>
+                    {' '}
                     {summary.orders && summary.orders[0]
                       ? summary.orders[0].numOrders
                       : 0}
-                  </h2>
-                  <span>
-                    <i className="fa fa-users" /> Orders
-                  </span>
-                </div>
-              </div>
-            </div>
+                  </Card.Title>
+                  <Card.Text>
+                    <span>
+                      <i className="fa fa-users" /> Orders
+                    </span>
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
 
-            <div className="col-md-4">
-              <div className="card">
-                <div className="card-body">
-                  <h2 className="card-title">
+            <Col md={4}>
+              <Card>
+                <Card.Body>
+                  <Card.Title>
                     $
                     {summary.orders && summary.orders[0]
                       ? summary.orders[0].totalSales.toFixed(2)
                       : 0}
-                  </h2>
-                  <span>
-                    <i className="fa fa-money" /> Sales
-                  </span>
-                </div>
-              </div>
-            </div>
+                  </Card.Title>
+                  <Card.Text>
+                    <span>
+                      <i className="fa fa-money" /> Sales
+                    </span>
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
           </Row>
-          <div className="my-3">
+
+          <div>
             <h2>Sales</h2>
             {summary.dailyOrders.length === 0 ? (
               <MessageBox>No Sale</MessageBox>

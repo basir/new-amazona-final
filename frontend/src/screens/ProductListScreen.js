@@ -1,12 +1,14 @@
 import Axios from 'axios';
 import React, { useContext, useEffect, useReducer } from 'react';
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
-import { Store } from '../store';
+import { Store } from '../Store';
 import { getError } from '../utils';
+import Helmet from 'react-helmet';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -138,16 +140,23 @@ export default function ProductListScreen() {
   return (
     <div>
       <Row>
-        <h1 className="col">Products</h1>
-        <div className="col text-end">
-          <button
-            type="button"
-            className=" btn btn-primary"
-            onClick={createHandler}
-          >
-            Create Product
-          </button>
-        </div>
+        <Col>
+          <Helmet>
+            <title>Products</title>
+          </Helmet>
+          <h1>Products</h1>
+        </Col>
+        <Col className="col text-end">
+          <div>
+            <button
+              type="button"
+              className=" btn btn-primary"
+              onClick={createHandler}
+            >
+              Create Product
+            </button>
+          </div>
+        </Col>
       </Row>
 
       {loadingDelete && <LoadingBox></LoadingBox>}

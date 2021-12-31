@@ -1,5 +1,5 @@
 import { createContext, useReducer } from 'react';
-import logger from 'use-reducer-logger';
+// import logger from 'use-reducer-logger';
 
 export const Store = createContext();
 const initialState = {
@@ -90,7 +90,8 @@ function reducer(state, action) {
 
 export function StoreProvider(props) {
   const [state, dispatch] = useReducer(
-    process.env.NODE_ENV === 'development' ? logger(reducer) : reducer,
+    //process.env.NODE_ENV === 'development' ? logger(reducer) : reducer,
+    reducer,
     initialState
   );
 

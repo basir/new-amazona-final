@@ -1,5 +1,5 @@
 {
-  "name": "angular-amazona",
+  "name": "mern-amazona-final",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,14 +9,7 @@
     "start": "node backend/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/basir/angular-amazona.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/basir/angular-amazona/issues"
-  },
-  "homepage": "https://github.com/basir/angular-amazona#readme"
+  "engines": {
+    "node": "16.x"
+  }
 }

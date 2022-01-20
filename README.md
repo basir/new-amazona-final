@@ -76,6 +76,70 @@ $ npm start
 - Q/A: https://webacademy.pro/amazona
 - Contact Instructor: [Basir](mailto:basir.jafarzadeh@gmail.com)
 
+## Introduction
+
+# Introduction
+
+Here I'm going to have an introduction to this course.
+We are going to build a fully-functional ecommerce website using MERN Stack.
+
+This course is for beginners and advanced developers.
+
+## if you are new to web development the first 40 lessons of this course are for you.
+
+by the end of these lessons you will build following features:
+
+- Professional and responsive website layout using react bootstrap
+- Display Slideshow of sellers on and list featured product in home screen
+- Show product details including image, descriptions and price
+- Product Category in sidebar
+- Review Products and Show Ratings
+- Implement add to cart functionality and dispaly shopping cart
+- Manage users by creating sign up and sign in screen
+- Checkout wizard to get shipping info, payment method and preview order
+- Manage user profile and show order history of users
+
+## By the end of beginner part you are junior developer will learn:
+
+- Reactjs to create a fully functional website using create-react-app
+- React Bootstrap to design website based on the best practice in UI/UX design
+- React hooks like state hook and reducer hook to manage state in components
+- React Context to manage state of application is a predictable way
+- Nodejs and express to build a backend api
+- MongoDB and Mongoose to save and retrieve data in the database
+- JSonWebToken to authenticate users
+- Paypal checkout button to make payment for the orders
+- Heroku service to deploy website on the cloud
+
+## So, you are junior developer will build a fully functional
+
+ecommerce website like amazona and you can put it on your portfolio website
+or present it as a side project for you next job interview and hopefully get
+your dream job.
+
+## if you are a senior developer or want to be a senior react and nextjs developer the last 30 lessons satisfy your needs.
+
+- we implement real world features like sales stats and charts on admin dashboard
+- Manage products to create, update, delete and paginate products
+- Upload images of products and avatar of users on local and cloudinary server
+- Manage orders to list, delete and handle orders as delivered or canceled.
+- Manage users to list, grant and deny admin permissions to the users and customers
+- Email order invoice to the user and Export order invoice as PDF file
+- Implement forget and reset password
+-
+
+## What you will learn as advanced developers:
+
+- working google map to show user location on the map to get customer address
+- advanced mongodb function like aggration to calculate summary data for admin dashboard
+- configuring mailgun email service to send emails to customers
+- display professional charts using google chart
+- upload you files on cloudinary server
+
+## at the end of this course
+
+you will build a professional ecommerce website using MERN stack.
+
 ## Lessons
 
 1. Introduction to this course
@@ -160,8 +224,7 @@ $ npm start
 13. Add Conext API to Product Screen
     1. create product details constants, actions and reducers
     2. add reducer to store.js
-    3. use action in ProductScreen.js
-    4. add /api/product/:id to backend api
+    3.
 14. Handle Add To Cart Button
     1. Handle Add To Cart in ProductScreen.js
     2. create CartScreen.js
@@ -400,6 +463,7 @@ $ npm start
     2. create chat box component
     3. create support screen
 86. Upgrade To React 17, Router 6, Mongoose 6
+
     1. Backend
     2. Uninstall and install all packages
     3. remove options in mongoose connect
@@ -417,3 +481,8 @@ $ npm start
     15. replace props.location.search with const { search } = useLocation(); and URLSearchParams
     16. replace props.match.path with const {pathname} = useLocation();
     17. put userInfo in useEffect in ChatBox, SupportScreen
+
+87. Create Signin Backend API
+    1. create userRouter.js
+    2. use it in server.js
+    3. seed sample users
